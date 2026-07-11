@@ -1,13 +1,48 @@
+#include<stdio.h>
 #include "raylib.h"
 #include "cascade.h"
+#include "renderer.h"
+#include "spatial_hash.h"
 
 int main(void) {
     InitWindow(WINDOW_W, WINDOW_H, "Cascade - SPH Fluid Simulator");
     SetTargetFPS(60);
     while (!WindowShouldClose()) {
         BeginDrawing();
-        ClearBackground((Color){7, 9, 26, 255});
-        DrawText("Cascade loading...", 600, 380, 24, WHITE);
+        ClearBackground((Color){250, 128, 114, 20});
+        // TEMPORARY TEST CODE — remove after confirming render_blended works
+        SimState sim;
+        sim.count = 1;
+        sim.particle_radius = 30; 
+        SpatialHash sh;
+
+        int dots = ((int)(GetTime() * 2) % 5); // 0 to 4, changes over time
+        sim.count+=dots;
+        switch(dots){
+            case 4:
+            sim.particles[0].pos = (Vector2){400, 450};
+            sim.particles[0].color = RED;
+            case 3:
+            sim.particles[1].pos = (Vector2){420, 450};
+            sim.particles[1].color = GREEN;
+            case 2:
+            sim.particles[2].pos = (Vector2){440, 450};
+            sim.particles[2].color = BLUE;
+            case 1:
+            sim.particles[3].pos = (Vector2){460, 450};
+        sim.particles[3].color = YELLOW;
+             case 0:
+             sim.particles[4].pos = (Vector2){480, 450};
+             sim.particles[4].color = PURPLE;
+             default:
+              sh_build(&sh, sim.particles, sim.count);
+              render_blended(&sim, &sh);
+              break;
+        }
+
+//test code end 
+        const char* suffix = dots == 0 ? "hochche" : dots == 1 ? "mone " : dots == 2 ? "mone toh " : dots==3? "mone toh hoy" : "mone toh hoy na";
+        DrawText(TextFormat("<><><> hohchce?%s", suffix), 300, 380, 50, WHITE);
         EndDrawing();
     }
     CloseWindow();

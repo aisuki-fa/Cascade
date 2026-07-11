@@ -1,10 +1,24 @@
 #include "input.h"
+#include "raymath.h"
+#include <stdlib.h>
 
-void input_update(SimState* sim, UIState* ui, Vector2 mouse, float dt) {
-    (void)sim;
-    (void)ui;
-    (void)mouse;
-    (void)dt;
+void input_update(SimState* sim, UIState* ui, ObstacleList* obs, Vector2 mouse, float dt) {
+    static Vector2 last_mouse = {0};                // persists for every frame to track mouse position
+
+    // only spawn if mouse is in the simulation area, left click is held, and not in draw mode
+    if (mouse.x > SIDEBAR_W && IsMouseButtonDown(MOUSE_BUTTON_LEFT) && !ui->draw_mode) {  
+        Vector2 spawn_vel = Vector2Scale(Vector2Subtract(mouse, last_mouse), 3.0f);          // direction + speed * 3
+        for (int i = 0; i < 4; i++) {                                                        // 4 particles per frame 
+            Vector2 pos = { mouse.x + (rand() % 21 - 10), mouse.y + (rand() % 21 - 10) };    // ±10px random spread 
+            input_add_particle(sim, pos, spawn_vel, ui->spawn_color);                        // add 1 particle to simulation
+        }
+    }
+
+    if (IsKeyPressed(KEY_SPACE)) sim->paused = !sim->paused;         // toggle pause (once per press)
+    if (IsKeyPressed(KEY_R)) sim->reset_requested = true;            // signal main.c to clear all particles
+    if (IsKeyPressed(KEY_D)) ui->draw_mode = !ui->draw_mode;         // toggle wall-drawing mode
+
+    last_mouse = mouse;                                              // update last mouse position for next frame
 }
 
 void input_add_particle(SimState* sim, Vector2 pos, Vector2 vel, Color color) {

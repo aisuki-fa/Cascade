@@ -1,6 +1,12 @@
 #include "cascade.h"
 #include "renderer.h"
 #include<math.h>
+void render_blended(SimState* sim,SpatialHash* sh );
+void render_solid(SimState* sim);
+void render_velocity(SimState* sim);
+void render_density(SimState* sim);
+void render_particles(SimState* sim, SpatialHash* sh, UIState* ui);
+void render_hud(int count, int fps, bool paused);
 
 
 
@@ -69,11 +75,12 @@ void render_particles(SimState* sim, SpatialHash* sh, UIState* ui) {
     (void)sh;
         DrawLine(SIDEBAR_W, 0, SIDEBAR_W, WINDOW_H,  (Color){25,40,72,255});
     if(ui->render_mode==0)
-    render_solid(sim);
+    render_blended(sim,sh);
     else if (ui->render_mode==2)
     render_density(sim);
     else if (ui->render_mode==1)
     render_velocity(sim);
+
 }
 
 void render_blended(SimState* sim,SpatialHash* sh){

@@ -31,7 +31,7 @@ typedef struct {
 // ── Simulation state (Person A owns this, others read it) ─────────
 typedef struct {
     Particle particles[MAX_PARTICLES];
-    int      count;
+    int count;
 
     // physics params (Person C sliders write to these)
     float gravity;

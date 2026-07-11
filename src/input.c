@@ -6,17 +6,19 @@ void input_update(SimState* sim, UIState* ui, ObstacleList* obs, Vector2 mouse, 
     static Vector2 last_mouse = {0};                // persists for every frame to track mouse position
 
     // only spawn if mouse is in the simulation area, left click is held, and not in draw mode
-    if (mouse.x > SIDEBAR_W && IsMouseButtonDown(MOUSE_BUTTON_LEFT) && !ui->draw_mode) {  
-        Vector2 spawn_vel = Vector2Scale(Vector2Subtract(mouse, last_mouse), 3.0f);          // direction + speed * 3
-        for (int i = 0; i < 4; i++) {                                                        // 4 particles per frame 
-            Vector2 pos = { mouse.x + (rand() % 21 - 10), mouse.y + (rand() % 21 - 10) };    // ±10px random spread 
-            input_add_particle(sim, pos, spawn_vel, ui->spawn_color);                        // add 1 particle to simulation
+    bool can_spawn = mouse.x > SIDEBAR_W && IsMouseButtonDown(MOUSE_BUTTON_LEFT) && !(ui && ui->draw_mode);
+    if (can_spawn) {  
+        Color color = ui ? ui->spawn_color : (Color){135, 206, 235, 255};                // default light blue if no UI
+        Vector2 spawn_vel = Vector2Scale(Vector2Subtract(mouse, last_mouse), 3.0f);      // direction + speed * 3
+        for (int i = 0; i < 4; i++) {                                                    // 4 particles per frame 
+            Vector2 pos = { mouse.x + (rand() % 21 - 10), mouse.y + (rand() % 21 - 10) };  // ±10px random spread 
+            input_add_particle(sim, pos, spawn_vel, color);                               // add 1 particle to simulation
         }
     }
 
     if (IsKeyPressed(KEY_SPACE)) sim->paused = !sim->paused;         // toggle pause (once per press)
     if (IsKeyPressed(KEY_R)) sim->reset_requested = true;            // signal main.c to clear all particles
-    if (IsKeyPressed(KEY_D)) ui->draw_mode = !ui->draw_mode;         // toggle wall-drawing mode
+    if (ui && IsKeyPressed(KEY_D)) ui->draw_mode = !ui->draw_mode;  // toggle wall-drawing mode
 
     last_mouse = mouse;                                              // update last mouse position for next frame
 }

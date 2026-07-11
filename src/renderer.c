@@ -67,12 +67,37 @@ void render_hud(int count, int fps, bool paused) {
 
 void render_particles(SimState* sim, SpatialHash* sh, UIState* ui) {
     (void)sh;
+        DrawLine(SIDEBAR_W, 0, SIDEBAR_W, WINDOW_H,  (Color){25,40,72,255});
     if(ui->render_mode==0)
     render_solid(sim);
     else if (ui->render_mode==2)
     render_density(sim);
     else if (ui->render_mode==1)
     render_velocity(sim);
-    DrawLine(SIDEBAR_W, 0, SIDEBAR_W, WINDOW_H, GRAY);
+}
 
+void render_blended(SimState* sim,SpatialHash* sh){
+    for(int i=0;i<sim->count;i++){
+        int out_ids[100];
+        int out_count=0;
+        sh_query(sh,sim->particles[i].pos.x,sim->particles[i].pos.y,out_ids,&out_count,100);
+        float r=0,g=0,b=0,w=0;
+        for(int j=0;j<out_count;j++){
+            int id=out_ids[j];
+            float distance= sqrt(pow(sim->particles[i].pos.x-sim->particles[id].pos.x,2)+pow(sim->particles[i].pos.y-sim->particles[id].pos.y,2));
+            float wt= fmaxf(0,1.0f-distance/30.0f);
+            r+=sim->particles[id].color.r*wt;
+            g+=sim->particles[id].color.g*wt;
+            b+=sim->particles[id].color.b*wt;
+            w+=wt;
+        }
+            Color c;
+            if(w>0)
+            c=(Color){(int)(r/w),(int)(g/w),(int)(b/w),255};
+            else c=sim->particles[i].color;
+            DrawCircleV(sim->particles[i].pos,sim->particle_radius,c);
+
+
+        
+    }
 }

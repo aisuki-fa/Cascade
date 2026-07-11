@@ -1,3 +1,9 @@
 src/*.o
 cascade
 .DS_Store
+
+# Compiled raylib binaries (platform-specific, don't commit)
+lib/**/*.a
+lib/**/*.dylib
+lib/**/*.so
+lib/**/*.dll

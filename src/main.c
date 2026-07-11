@@ -7,7 +7,7 @@ int main(void) {
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground((Color){7, 9, 26, 255});
-        DrawText("Cascade loading...", 600, 380, 24, WHITE);
+        DrawText("hochchhe...", 600, 380, 24, WHITE);
         EndDrawing();
     }
     CloseWindow();

@@ -4,6 +4,9 @@
 #include "cascade.h"
 #include "spatial_hash.h"
 
+void render_solid(SimState* sim);
+void render_velocity(SimState* sim);
+void render_density(SimState* sim);
 void render_particles(SimState* sim, SpatialHash* sh, UIState* ui);
 void render_hud(int count, int fps, bool paused);
 

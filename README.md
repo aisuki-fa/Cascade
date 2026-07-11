@@ -47,5 +47,4 @@ src/
 └── obstacles.[ch]     # ramps, boxes, walls
 ```
 
-## License
-MIT
+

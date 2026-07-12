@@ -63,11 +63,14 @@ void render_density(SimState* sim){
 
 
 void render_hud(int count, int fps, bool paused) {
-    DrawText(TextFormat("Particles: %d",count), SIDEBAR_W+10,10,10,WHITE);
-    Color fc= fps>50? GREEN: fps>30? YELLOW: RED;
-    DrawText(TextFormat("FPS: %d",fps),SIDEBAR_W+18,30,18,fc);
-    if(paused){
-        DrawText("[ PAUSED ]", WINDOW_W/2-60, WINDOW_H/2, 24, PINK);
+    (void)count;
+    Color fc = fps > 50 ? GREEN : fps > 30 ? YELLOW : RED;
+    DrawText(TextFormat("FPS: %d", fps), WINDOW_W - 90, 12, 16, fc);
+    if (paused) {
+        DrawRectangle(SIDEBAR_W, 0, SIM_W, WINDOW_H, (Color){0, 0, 0, 100});
+        const char* msg = "|| PAUSED ||";
+        int w = MeasureText(msg, 28);
+        DrawText(msg, SIDEBAR_W + (SIM_W - w) / 2, WINDOW_H / 2 - 14, 28, (Color){255, 255, 255, 200});
     }
 }
 

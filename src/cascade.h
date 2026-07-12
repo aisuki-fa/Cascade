@@ -57,6 +57,7 @@ typedef struct {
     bool        draw_mode;      // true = user is drawing walls
     bool        mouse_attract;  // right click held
     bool        mouse_repel;    // middle click / space held
+    Font        title_font;     // custom font for title
 } UIState;
 
 // ── Obstacle ──────────────────────────────────────────────────────

@@ -11,14 +11,18 @@ int main(void) {
     UIState ui = {0};
     ui.spawn_color = (Color){255, 255, 255, 255};
     ui.render_mode = RENDER_SOLID;
-    ObstacleList obs = {0};  
+    ui.title_font = LoadFont("assets/fonts/Orbitron-Bold.ttf");
+    ObstacleList obs = {0};
+    SimState sim = {0};
+    sim.gravity = 500;
+    sim.viscosity = 0.5f;
+    sim.target_density = 300;
+    sim.particle_radius = 8;
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground((Color){250, 128, 114, 20});
         // TEMPORARY TEST CODE — remove after confirming render_blended works
-        SimState sim;
         sim.count = 1;
-        sim.particle_radius = 30; 
         SpatialHash sh;
 
         int dots = ((int)(GetTime() * 2) % 5); // 0 to 4, changes over time
@@ -51,6 +55,7 @@ int main(void) {
        
         EndDrawing();
     }
+    UnloadFont(ui.title_font);
     CloseWindow();
     return 0;
 }

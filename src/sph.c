@@ -93,6 +93,14 @@ void sph_compute_forces(SimState* sim, SpatialHash* sh) {
         }
 
         sim->particles[i].force.y += sim->gravity * sim->particles[i].density;
+
+        // Clamp force magnitude to prevent numerical explosion
+        float mag = sqrtf(sim->particles[i].force.x * sim->particles[i].force.x
+                         + sim->particles[i].force.y * sim->particles[i].force.y);
+        if (mag > 5000.0f) {
+            sim->particles[i].force.x = (sim->particles[i].force.x / mag) * 5000.0f;
+            sim->particles[i].force.y = (sim->particles[i].force.y / mag) * 5000.0f;
+        }
     }
 }
 
@@ -115,6 +123,10 @@ void sph_integrate(SimState* sim, float dt) {
             pi->vel.x = (pi->vel.x / speed) * 800.0f;
             pi->vel.y = (pi->vel.y / speed) * 800.0f;
         }
+
+        // Global damping (simulates energy loss to heat)
+        pi->vel.x *= 0.995f;
+        pi->vel.y *= 0.995f;
 
         pi->pos.x += pi->vel.x * dt;
         pi->pos.y += pi->vel.y * dt;

@@ -1,5 +1,5 @@
-#ifndef SPH_H
-#define SPH_H
+#ifndef SPH_H_INCLUDED
+#define SPH_H_INCLUDED
 
 #include "cascade.h"
 #include "spatial_hash.h"

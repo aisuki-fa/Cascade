@@ -37,10 +37,7 @@ void ui_draw_sidebar(SimState* sim, UIState* ui, ObstacleList* obs) {
     DrawLine(SIDEBAR_W, 0, SIDEBAR_W, WINDOW_H, (Color){25, 40, 72, 255});
 
     // ── Title ───────────────────────────────────────────────────
-    if (ui->title_font.glyphCount > 0)
-        DrawTextEx(ui->title_font, "CASCADE", (Vector2){PAD, 10}, 24, 2, BLACK);
-    else
-        DrawText("CASCADE", PAD, 12, 28, BLACK);
+    DrawText("CASCADE", PAD, 12, 28, BLACK);
     DrawRectangle(PAD, 44, 70, 2, (Color){255, 255, 255, 120});
 
     // ── Button style ────────────────────────────────────────────

@@ -1,12 +1,17 @@
 #include<stdio.h>
 #include "raylib.h"
 #include "cascade.h"
+#include "ui.h"
 #include "renderer.h"
 #include "spatial_hash.h"
 
 int main(void) {
     InitWindow(WINDOW_W, WINDOW_H, "Cascade - SPH Fluid Simulator");
     SetTargetFPS(60);
+    UIState ui = {0};
+    ui.spawn_color = (Color){255, 255, 255, 255};
+    ui.render_mode = RENDER_SOLID;
+    ObstacleList obs = {0};  
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground((Color){250, 128, 114, 20});
@@ -39,10 +44,11 @@ int main(void) {
               render_blended(&sim, &sh);
               break;
         }
-
-//test code end 
-        const char* suffix = dots == 0 ? "hochche" : dots == 1 ? "mone " : dots == 2 ? "mone toh " : dots==3? "mone toh hoy" : "mone toh hoy na";
-        DrawText(TextFormat("<><><> hohchce?%s", suffix), 300, 380, 50, WHITE);
+        ui_draw_sidebar(&sim, &ui, &obs);
+        //test code end 
+        const char* suffix = dots == 0 ? "hochchhe" : dots == 1 ? "mone " : dots == 2 ? "mone toh " : dots==3? "mone toh hoy" : "mone toh hoy na";
+        DrawText(TextFormat("<><><> hochchhe?%s", suffix), 300, 380, 50, WHITE);
+       
         EndDrawing();
     }
     CloseWindow();

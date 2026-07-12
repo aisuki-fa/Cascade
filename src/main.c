@@ -1,61 +1,77 @@
-#include<stdio.h>
+#include <math.h>
 #include "raylib.h"
+#include "raygui.h"
 #include "cascade.h"
-#include "ui.h"
-#include "renderer.h"
 #include "spatial_hash.h"
+#include "sph.h"
+#include "renderer.h"
+#include "input.h"
+#include "ui.h"
+#include "obstacles.h"
+
+static void sim_reset(SimState* sim) {
+    sim->count = 0;
+}
 
 int main(void) {
     InitWindow(WINDOW_W, WINDOW_H, "Cascade - SPH Fluid Simulator");
     SetTargetFPS(60);
-    UIState ui = {0};
-    ui.spawn_color = (Color){255, 255, 255, 255};
-    ui.render_mode = RENDER_SOLID;
-    ui.title_font = LoadFont("assets/fonts/Orbitron-Bold.ttf");
-    ObstacleList obs = {0};
-    SimState sim = {0};
-    sim.gravity = 500;
-    sim.viscosity = 0.5f;
-    sim.target_density = 300;
-    sim.particle_radius = 8;
-    while (!WindowShouldClose()) {
-        BeginDrawing();
-        ClearBackground((Color){250, 128, 114, 20});
-        // TEMPORARY TEST CODE — remove after confirming render_blended works
-        sim.count = 1;
-        SpatialHash sh;
 
-        int dots = ((int)(GetTime() * 2) % 5); // 0 to 4, changes over time
-        sim.count+=dots;
-        switch(dots){
-            case 4:
-            sim.particles[0].pos = (Vector2){400, 450};
-            sim.particles[0].color = RED;
-            case 3:
-            sim.particles[1].pos = (Vector2){420, 450};
-            sim.particles[1].color = GREEN;
-            case 2:
-            sim.particles[2].pos = (Vector2){440, 450};
-            sim.particles[2].color = BLUE;
-            case 1:
-            sim.particles[3].pos = (Vector2){460, 450};
-        sim.particles[3].color = YELLOW;
-             case 0:
-             sim.particles[4].pos = (Vector2){480, 450};
-             sim.particles[4].color = PURPLE;
-             default:
-              sh_build(&sh, sim.particles, sim.count);
-              render_blended(&sim, &sh);
-              break;
+    SimState sim = {0};
+    sim.gravity = 500.0f;
+    sim.viscosity = 0.5f;
+    sim.target_density = 300.0f;
+    sim.particle_radius = 8.0f;
+    sim.paused = false;
+    sim.reset_requested = false;
+
+    UIState ui = {0};
+    ui.spawn_color = (Color){135, 206, 235, 255};
+    ui.render_mode = RENDER_SOLID;
+    ui.draw_mode = false;
+
+    SpatialHash sh = {0};
+    ObstacleList obs = {0};
+
+    while (!WindowShouldClose()) {
+        float dt = GetFrameTime();
+        dt = fminf(dt, 0.02f);  // cap for lag spikes
+
+        // Handle reset
+        if (sim.reset_requested) {
+            sim_reset(&sim);
+            sim.reset_requested = false;
         }
+
+        // Physics step
+        if (!sim.paused) {
+            sh_build(&sh, sim.particles, sim.count);
+            sph_compute_density(&sim, &sh);
+            sph_compute_forces(&sim, &sh);
+            sph_integrate(&sim, dt);
+            obs_resolve_collisions(&obs, sim.particles, sim.count, sim.particle_radius);
+        }
+
+        // Input
+        Vector2 mouse = GetMousePosition();
+        input_update(&sim, &ui, &obs, mouse, dt);
+
+        // Draw
+        BeginDrawing();
+        ClearBackground((Color){7, 9, 26, 255});
+
+        render_particles(&sim, &sh, &ui);
+        obs_render(&obs);
+        obs_draw_update(&obs, mouse,
+            IsMouseButtonDown(MOUSE_BUTTON_LEFT),
+            IsMouseButtonReleased(MOUSE_BUTTON_LEFT),
+            ui.draw_mode);
         ui_draw_sidebar(&sim, &ui, &obs);
-        //test code end 
-        const char* suffix = dots == 0 ? "hochchhe" : dots == 1 ? "mone " : dots == 2 ? "mone toh " : dots==3? "mone toh hoy" : "mone toh hoy na";
-        DrawText(TextFormat("<><><> hochchhe?%s", suffix), 300, 380, 50, WHITE);
-       
+        render_hud(sim.count, GetFPS(), sim.paused);
+
         EndDrawing();
     }
-    UnloadFont(ui.title_font);
+
     CloseWindow();
     return 0;
 }

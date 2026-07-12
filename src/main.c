@@ -41,8 +41,8 @@ int main(void) {
         }
 
 //test code end 
-        const char* suffix = dots == 0 ? "hochche" : dots == 1 ? "mone " : dots == 2 ? "mone toh " : dots==3? "mone toh hoy" : "mone toh hoy na";
-        DrawText(TextFormat("<><><> hohchce?%s", suffix), 300, 380, 50, WHITE);
+        const char* suffix = dots == 0 ? "hochchhe" : dots == 1 ? "mone " : dots == 2 ? "mone toh " : dots==3? "mone toh hoy" : "mone toh hoy na";
+        DrawText(TextFormat("<><><> hochchhe?%s", suffix), 300, 380, 50, WHITE);
         EndDrawing();
     }
     CloseWindow();

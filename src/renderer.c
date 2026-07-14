@@ -28,40 +28,40 @@ void render_solid(SimState* sim){//renders particles into circles
 }
 
 void render_velocity(SimState* sim){
+    Color c;
     for(int i=0;i<sim->count;i++){
         float speed=sqrt(sim->particles[i].vel.x*sim->particles[i].vel.x+sim->particles[i].vel.y*sim->particles[i].vel.y);
         if (speed<100)
-            sim->particles[i].color=lerp_color((Color){213, 196, 166}, (Color){114,43,106}, (speed)/100);
+            c=lerp_color((Color){213, 196, 166}, (Color){114,43,106}, (speed)/100);
         else if(speed<=400)
-            sim->particles[i].color=lerp_color((Color){114,43,106}, (Color){162,38,75}, (speed-100)/300);
+            c=lerp_color((Color){114,43,106}, (Color){162,38,75}, (speed-100)/300);
         else if(speed>400){
             speed=(speed-400)/400;
             // if(speed>1)
             // speed=1;
-            sim->particles[i].color=lerp_color((Color){162,38,75}, (Color){211,33,45}, speed);
+            c=lerp_color((Color){162,38,75}, (Color){211,33,45}, speed);
     }
-    DrawCircleV(sim->particles[i].pos,sim->particle_radius,sim->particles[i].color);
+    DrawCircleV(sim->particles[i].pos,sim->particle_radius,c);
     }
 }
 void render_density(SimState* sim){
+    Color c;
     for(int i=0;i<sim->count;i++){
         float t= sim->particles[i].density / sim->target_density;
         // t=fminf(fmaxf(t,0),2);
         if(t<1){
-            sim->particles[i].color= lerp_color((Color){200,186,126}, (Color){78, 80, 38}, t);
+            c= lerp_color((Color){200,186,126}, (Color){78, 80, 38}, t);
         }
         else{
-            sim->particles[i].color= lerp_color((Color){73, 57, 44},(Color){78, 80, 38},  1/t);
+            c= lerp_color((Color){73, 57, 44},(Color){78, 80, 38},  1/t);
             
         }
-        DrawCircleV(sim->particles[i].pos,sim->particle_radius,sim->particles[i].color);
+        DrawCircleV(sim->particles[i].pos,sim->particle_radius,c);
 
 
     }
 
 }
-
-
 void render_hud(int count, int fps, bool paused) {
     (void)count;
     Color fc = fps > 50 ? GREEN : fps > 30 ? YELLOW : RED;
@@ -76,7 +76,6 @@ void render_hud(int count, int fps, bool paused) {
         DrawText(TextFormat("Ongoing"), WINDOW_W - 120, 45, 30, fc);
     }
 }
-
 void render_particles(SimState* sim, SpatialHash* sh, UIState* ui) {
     (void)sh;
         DrawLine(SIDEBAR_W, 0, SIDEBAR_W, WINDOW_H,  (Color){25,40,72,255});

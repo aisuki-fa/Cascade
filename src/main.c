@@ -21,7 +21,7 @@ int main(void) {
     sim.gravity = 500.0f;
     sim.viscosity = 0.5f;
     sim.target_density = 300.0f;
-    sim.particle_radius = 8.0f;
+    sim.particle_radius = 3.0f;
     sim.paused = false;
     sim.reset_requested = false;
 
@@ -59,6 +59,7 @@ int main(void) {
         // Draw
         BeginDrawing();
         ClearBackground((Color){7, 9, 26, 255});
+        // ClearBackground((Color){255, 255, 255, 255});
 
         render_particles(&sim, &sh, &ui);
         obs_render(&obs);

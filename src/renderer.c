@@ -98,7 +98,7 @@ void render_blended(SimState* sim,SpatialHash* sh){
         for(int j=0;j<out_count;j++){
             int id=out_ids[j];
             float distance= sqrt(pow(sim->particles[i].pos.x-sim->particles[id].pos.x,2)+pow(sim->particles[i].pos.y-sim->particles[id].pos.y,2));
-            float wt= fmaxf(0,1.0f-distance/300.0f);
+            float wt= fmaxf(0,1.0f-distance/30.0f);
             r+=sim->particles[id].color.r*wt;
             g+=sim->particles[id].color.g*wt;
             b+=sim->particles[id].color.b*wt;

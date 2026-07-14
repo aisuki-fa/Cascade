@@ -21,7 +21,7 @@ int main(void) {
     sim.gravity = 500.0f;
     sim.viscosity = 0.5f;
     sim.target_density = 300.0f;
-    sim.particle_radius = 8.0f;
+    sim.particle_radius = 3.0f;
     sim.paused = false;
     sim.reset_requested = false;
 

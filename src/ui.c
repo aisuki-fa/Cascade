@@ -5,25 +5,24 @@
 #include "obstacles.h"
 
 // ── Layout constants ───────────────────────────────────────────
-#define PAD         12      // sidebar left/right padding
-#define INNER_W     196     // content width (SIDEBAR_W - 2*PAD)
-#define SEC_HDR_Y   11      // section header font size
-#define SEC_HDR_H   18      // section header + gap below
-#define ELEM_H      26      // button / toggle height
-#define ELEM_GAP    6       // gap between sibling elements
-#define SEC_GAP     10      // gap between sections
-#define SLIDER_H    18      // slider track height
-#define SLIDER_GAP  4       // gap between slider and value box
-#define VALBOX_H    16      // value readout box height
-#define VALBOX_W    56      // value readout box width
+#define PAD         12
+#define INNER_W     196
+#define SEC_HDR_Y   11
+#define SEC_HDR_H   18
+#define ELEM_H      26
+#define ELEM_GAP    6
+#define SEC_GAP     10
+#define SLIDER_H    18
+#define SLIDER_GAP  4
+#define VALBOX_H    16
+#define VALBOX_W    56
 
-static void DrawSectionBg(int y0, int y1) {
-    DrawRectangle(4, y0 - 4, INNER_W + 8, (y1 - y0) + 12, (Color){0, 0, 0, 35});
-}
-
-static void DrawSeparator(int y) {
-    DrawLine(PAD, y, PAD + INNER_W, y, (Color){0, 0, 0, 50});
-}
+// ── Section background heights ─────────────────────────────────
+#define BG_SIM      80
+#define BG_FLUID    260
+#define BG_SPAWN    170
+#define BG_VIZ      70
+#define BG_OBS      185
 
 static void DrawValueBox(float value, const char* fmt, int x, int y) {
     Rectangle box = {(float)x, (float)y, (float)VALBOX_W, (float)VALBOX_H};
@@ -33,7 +32,7 @@ static void DrawValueBox(float value, const char* fmt, int x, int y) {
 
 void ui_draw_sidebar(SimState* sim, UIState* ui, ObstacleList* obs) {
     // ── Sidebar background + border ─────────────────────────────
-    DrawRectangle(0, 0, SIDEBAR_W, WINDOW_H, (Color){155, 82, 119, 255});
+    DrawRectangle(0, 0, SIDEBAR_W, WINDOW_H, (Color){7, 128, 227, 255});
     DrawLine(SIDEBAR_W, 0, SIDEBAR_W, WINDOW_H, (Color){25, 40, 72, 255});
 
     // ── Title ───────────────────────────────────────────────────
@@ -74,63 +73,49 @@ void ui_draw_sidebar(SimState* sim, UIState* ui, ObstacleList* obs) {
     GuiSetStyle(LABEL, TEXT_COLOR_NORMAL, 0x000000FF);
 
     int y = 52;
-    int sec_start;
 
     // ═══ SIMULATION ═════════════════════════════════════════════
-    sec_start = y;
+    DrawRectangle(10, y - 4, 200, BG_SIM, (Color){20, 30, 60, 180});
     DrawText("SIMULATION", PAD, y, SEC_HDR_Y, BLACK); y += SEC_HDR_H;
     if (GuiButton((Rectangle){(float)PAD, (float)y, INNER_W, ELEM_H}, sim->paused ? "RESUME" : "PAUSE"))
         sim->paused = !sim->paused;
     y += ELEM_H + ELEM_GAP;
     if (GuiButton((Rectangle){(float)PAD, (float)y, INNER_W, ELEM_H}, "RESET"))
         sim->reset_requested = true;
-    y += ELEM_H;
-    DrawSectionBg(sec_start, y);
-    DrawSeparator(y + SEC_GAP / 2);
-    y += SEC_GAP;
+    y += ELEM_H + SEC_GAP;
 
     // ═══ FLUID ══════════════════════════════════════════════════
-    sec_start = y;
+    DrawRectangle(10, y - 4, 200, BG_FLUID, (Color){20, 30, 60, 180});
     DrawText("FLUID", PAD, y, SEC_HDR_Y, BLACK); y += SEC_HDR_H;
 
-    // Gravity
     DrawText("Gravity", PAD, y, 10, BLACK); y += 16;
     GuiSlider((Rectangle){(float)PAD, (float)y, INNER_W, SLIDER_H}, NULL, NULL, &sim->gravity, 0, 1500);
     y += SLIDER_H + SLIDER_GAP;
     DrawValueBox(sim->gravity, "%.0f", PAD, y); y += VALBOX_H + ELEM_GAP;
 
-    // Viscosity
     DrawText("Viscosity", PAD, y, 10, BLACK); y += 16;
     GuiSlider((Rectangle){(float)PAD, (float)y, INNER_W, SLIDER_H}, NULL, NULL, &sim->viscosity, 0, 5);
     y += SLIDER_H + SLIDER_GAP;
     DrawValueBox(sim->viscosity, "%.2f", PAD, y); y += VALBOX_H + ELEM_GAP;
 
-    // Density
     DrawText("Density", PAD, y, 10, BLACK); y += 16;
     GuiSlider((Rectangle){(float)PAD, (float)y, INNER_W, SLIDER_H}, NULL, NULL, &sim->target_density, 50, 800);
     y += SLIDER_H + SLIDER_GAP;
     DrawValueBox(sim->target_density, "%.0f", PAD, y); y += VALBOX_H + ELEM_GAP;
 
-    // Size
     DrawText("Size", PAD, y, 10, BLACK); y += 16;
     GuiSlider((Rectangle){(float)PAD, (float)y, INNER_W, SLIDER_H}, NULL, NULL, &sim->particle_radius, 3, 16);
     y += SLIDER_H + SLIDER_GAP;
-    DrawValueBox(sim->particle_radius, "%.0f", PAD, y); y += VALBOX_H;
-    DrawSectionBg(sec_start, y);
-    DrawSeparator(y + SEC_GAP / 2);
-    y += SEC_GAP;
+    DrawValueBox(sim->particle_radius, "%.0f", PAD, y); y += VALBOX_H + SEC_GAP;
 
     // ═══ SPAWN COLOR ════════════════════════════════════════════
-    sec_start = y;
+    DrawRectangle(10, y - 4, 200, BG_SPAWN, (Color){20, 30, 60, 180});
     DrawText("SPAWN COLOR", PAD, y, SEC_HDR_Y, BLACK); y += SEC_HDR_H;
     GuiColorPicker((Rectangle){(float)PAD, (float)y, 170, 95}, NULL, &ui->spawn_color);
-    y += 95;
-    DrawSectionBg(sec_start, y);
-    DrawSeparator(y + SEC_GAP / 2);
-    y += SEC_GAP;
+    y += 95 + SEC_GAP;
 
     // ═══ VISUALIZE ══════════════════════════════════════════════
-    sec_start = y;
+    DrawRectangle(10, y - 4, 200, BG_VIZ, (Color){20, 30, 60, 180});
     DrawText("VISUALIZE", PAD, y, SEC_HDR_Y, BLACK); y += SEC_HDR_H;
     static int mode_active = 0;
     static bool mode_open = false;
@@ -143,12 +128,10 @@ void ui_draw_sidebar(SimState* sim, UIState* ui, ObstacleList* obs) {
     DrawRectangle(PAD - 3, y + 3, 3, 20, mode_colors[mode_active]);
     y += 26;
     if (mode_open) y += 80;
-    DrawSectionBg(sec_start, y);
-    DrawSeparator(y + SEC_GAP / 2);
     y += SEC_GAP;
 
     // ═══ OBSTACLES ══════════════════════════════════════════════
-    sec_start = y;
+    DrawRectangle(10, y - 4, 200, BG_OBS, (Color){20, 30, 60, 180});
     DrawText("OBSTACLES", PAD, y, SEC_HDR_Y, BLACK); y += SEC_HDR_H;
     if (GuiButton((Rectangle){(float)PAD, (float)y, INNER_W, ELEM_H}, "Ramp"))  obs_add_preset(obs, PRESET_RAMP);
     y += ELEM_H + ELEM_GAP;
@@ -159,10 +142,7 @@ void ui_draw_sidebar(SimState* sim, UIState* ui, ObstacleList* obs) {
     if (GuiButton((Rectangle){(float)PAD, (float)y, INNER_W, ELEM_H}, "Clear"))  obs_clear(obs);
     y += ELEM_H + ELEM_GAP;
     GuiToggle((Rectangle){(float)PAD, (float)y, INNER_W, ELEM_H}, "Draw Walls", &ui->draw_mode);
-    y += ELEM_H;
-    DrawSectionBg(sec_start, y);
 
     // ── Particle counter (pinned to bottom) ─────────────────────
-    DrawText(TextFormat("Particles: %d / %d", sim->count, MAX_PARTICLES),
-             PAD, WINDOW_H - 24, 10, (Color){255, 255, 255, 180});
+    DrawText(TextFormat("Particles: %d/%d", sim->count, MAX_PARTICLES), 10, WINDOW_H - 30, 14, GRAY);
 }

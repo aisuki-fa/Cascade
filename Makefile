@@ -13,3 +13,6 @@ cascade: $(OBJ)
 
 clean:
 	rm -f src/*.o cascade
+
+run: clean cascade
+	./cascade

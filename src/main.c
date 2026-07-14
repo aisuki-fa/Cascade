@@ -59,6 +59,7 @@ int main(void) {
         // Draw
         BeginDrawing();
         ClearBackground((Color){7, 9, 26, 255});
+        // ClearBackground((Color){255, 255, 255, 255});
 
         render_particles(&sim, &sh, &ui);
         obs_render(&obs);

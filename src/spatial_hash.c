@@ -13,7 +13,7 @@
 //                          into sorted_ids[], grouped by cell.
 // ─────────────────────────────────────────────────────────────
 void sh_build(SpatialHash* sh, Particle* p, int count) {
-    int sim_width  = WINDOW_W - SIDEBAR_W;  // playable area excludes the sidebar
+    int sim_width  = WINDOW_W;  // playable area excludes the sidebar
     int sim_height = WINDOW_H;
 
     sh->grid_w    = (sim_width  / CELL_SIZE) + 1;

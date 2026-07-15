@@ -38,8 +38,7 @@ void sph_compute_density(SimState* sim, SpatialHash* sh) {
         int out_ids[MAX_NEIGHBORS];
         int out_count = 0;
 
-        sh_query(sh, sim->particles[i].pos.x, sim->particles[i].pos.y,
-                  out_ids, &out_count, MAX_NEIGHBORS);
+        sh_query(sh, sim->particles[i].pos.x, sim->particles[i].pos.y,out_ids, &out_count, MAX_NEIGHBORS);
 
         
 

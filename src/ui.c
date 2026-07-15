@@ -146,5 +146,5 @@ void ui_draw_sidebar(SimState* sim, UIState* ui, ObstacleList* obs) {
     GuiToggle((Rectangle){(float)PAD, (float)y, INNER_W, ELEM_H}, "Draw Walls", &ui->draw_mode);                       // toggle wall-drawing mode
 
     // ── Particle counter (pinned to bottom) ─────────────────────
-    DrawText(TextFormat("Particles: %d/%d", sim->count, MAX_PARTICLES), 10, WINDOW_H - 30, 14, BLACK);                 // live count
+    DrawText(TextFormat("Particles: %d/%d", sim->count, MAX_PARTICLES), WINDOW_W - 350, WINDOW_H-30, 30, BLUE);                 // live count moved to right bottom corner 
 }

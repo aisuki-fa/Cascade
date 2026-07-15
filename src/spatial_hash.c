@@ -28,14 +28,10 @@ void sh_build(SpatialHash* sh, Particle* p, int count) {
     }
 
     // ── PART 1: cell assignment ──
-    // For each particle, figure out which grid cell it falls in
-    // and tally it.
     for (int i = 0; i < count; i++) {
         int cell_x = (int)(p[i].pos.x / sh->cell_size);
         int cell_y = (int)(p[i].pos.y / sh->cell_size);
 
-        // Clamp so particles right at (or slightly past) the
-        // simulation edge don't index out of bounds.
         if (cell_x < 0) cell_x = 0;
         if (cell_x >= sh->grid_w) cell_x = sh->grid_w - 1;
         if (cell_y < 0) cell_y = 0;
@@ -46,23 +42,16 @@ void sh_build(SpatialHash* sh, Particle* p, int count) {
     }
 
     // ── PART 2: counting sort ──
-    // Turn per-cell counts into a prefix sum: cell_start[i] is the
-    // index in sorted_ids[] where cell i's particles begin.
     sh->cell_start[0] = 0;
     for (int i = 1; i < total_cells; i++) {
         sh->cell_start[i] = sh->cell_start[i - 1] + sh->cell_count[i - 1];
     }
 
-    // Temporary write-cursor per cell, initialized to each cell's
-    // starting slot. As we place particles we advance the cursor
-    // so the next particle in that cell goes to the next slot.
     static int pos[GRID_CELLS];
     for (int i = 0; i < total_cells; i++) {
         pos[i] = sh->cell_start[i];
     }
 
-    // Second pass: place each particle's index into sorted_ids[]
-    // at its cell's current write-cursor position.
     for (int i = 0; i < count; i++) {
         int cell_x = (int)(p[i].pos.x / sh->cell_size);
         int cell_y = (int)(p[i].pos.y / sh->cell_size);
@@ -82,12 +71,7 @@ void sh_build(SpatialHash* sh, Particle* p, int count) {
 // sh_query
 //
 // Given a position (x, y), finds all particles in the surrounding
-// 3x3 block of grid cells (the cell containing (x,y) plus its 8
-// neighbors) and writes their indices into out_ids.
-//
-// This is what makes neighbor lookups O(1)-ish per particle instead
-// of O(n): we only ever look at ~9 cells' worth of particles, never
-// the whole particle array.
+// 3x3 block of grid cells and writes their indices into out_ids.
 // ─────────────────────────────────────────────────────────────
 void sh_query(SpatialHash* sh, float x, float y, int* out_ids, int* out_count, int max_out) {
     *out_count = 0;
@@ -97,7 +81,6 @@ void sh_query(SpatialHash* sh, float x, float y, int* out_ids, int* out_count, i
 
     for (int iy = cy - 1; iy <= cy + 1; iy++) {
         for (int ix = cx - 1; ix <= cx + 1; ix++) {
-            // Skip cells outside the grid entirely.
             if (ix < 0 || ix >= sh->grid_w || iy < 0 || iy >= sh->grid_h) {
                 continue;
             }
@@ -108,7 +91,7 @@ void sh_query(SpatialHash* sh, float x, float y, int* out_ids, int* out_count, i
 
             for (int j = start; j < end; j++) {
                 if (*out_count >= max_out) {
-                    return; // out_ids buffer is full, stop early
+                    return;
                 }
                 out_ids[*out_count] = sh->sorted_ids[j];
                 (*out_count)++;

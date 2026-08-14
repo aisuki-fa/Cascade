@@ -17,6 +17,21 @@ void input_update(SimState* sim, UIState* ui, ObstacleList* obs, Vector2 mouse, 
         }
     }
 
+    // Right click = attract
+    if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT) && mouse.x > SIDEBAR_W) {         // right click held AND cursor in sim area (not sidebar)
+        for (int i = 0; i < sim->count; i++) {                                  // loop thru every particle
+            Vector2 dir = Vector2Subtract(mouse, sim->particles[i].pos);        // vector from particle to mouse = pull direction
+            float dist = sqrtf(dir.x * dir.x + dir.y * dir.y);                  // distance between particle and mouse 
+            if (dist < 150.0f && dist > 1.0f) {                                 // within 150px except ones on top of cursor 
+                dir.x /= dist;                                                  // normalize X to keep dir only as total vec len becomes 1 (unit vec)
+                dir.y /= dist;                                                  // normalize Y to keep dir only as total vec len becomes 1 (unit vec)
+                float strength = (150.0f - dist) * 6.0f;                        // force intensity is strongest near cursor, 0 at the edge
+                sim->particles[i].vel.x += dir.x * strength * dt;               // add pull to vel X (frame-rate independent)
+                sim->particles[i].vel.y += dir.y * strength * dt;               // add pull to vel Y (frame-rate independent)
+            }
+        }
+    }
+
     if (IsKeyPressed(KEY_SPACE)) sim->paused = !sim->paused;             // toggle pause (once per press)
     if (IsKeyPressed(KEY_R)) sim->reset_requested = true;                // signal main.c to clear all particles
     if (ui && IsKeyPressed(KEY_D)) ui->draw_mode = !ui->draw_mode;       // toggle wall-drawing mode

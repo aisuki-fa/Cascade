@@ -28,9 +28,11 @@ make clean && make
 
 | Key | Action |
 |-----|--------|
-| Left click | Spawn particles |
+| Left click (hold) | Spawn particles |
+| Right click (hold) | Attract / Repel (mode set by A/R) |
+| A / R | Attract mode / Repel mode |
 | Space | Pause/Resume |
-| R | Reset |
+| Backspace / X | Reset |
 | D | Toggle draw mode |
 
 ## Project Structure

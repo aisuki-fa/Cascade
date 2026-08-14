@@ -39,6 +39,7 @@ void sh_build(SpatialHash* sh, Particle* p, int count) {
 
         int cell_id = cell_x + cell_y * sh->grid_w;
         sh->cell_count[cell_id]++;
+        // combine the 2 x.y coordinates to get a single cell index and increment the count of particles in that cell
     }
 
     // ── PART 2: counting sort ──
@@ -46,6 +47,8 @@ void sh_build(SpatialHash* sh, Particle* p, int count) {
     for (int i = 1; i < total_cells; i++) {
         sh->cell_start[i] = sh->cell_start[i - 1] + sh->cell_count[i - 1];
     }
+    // imp PREFIX SUM to get the starting index of each cell in the sorted_ids array
+    //prefix sum also turns counts into starting adresses
 
     static int pos[GRID_CELLS];
     for (int i = 0; i < total_cells; i++) {
@@ -56,10 +59,13 @@ void sh_build(SpatialHash* sh, Particle* p, int count) {
         int cell_x = (int)(p[i].pos.x / sh->cell_size);
         int cell_y = (int)(p[i].pos.y / sh->cell_size);
 
+        // position /size to allocate cell index
+
         if (cell_x < 0) cell_x = 0;
         if (cell_x >= sh->grid_w) cell_x = sh->grid_w - 1;
         if (cell_y < 0) cell_y = 0;
         if (cell_y >= sh->grid_h) cell_y = sh->grid_h - 1;
+        // boundary check to avoid out of bounds error
 
         int cell_id = cell_x + cell_y * sh->grid_w;
         sh->sorted_ids[pos[cell_id]] = i;
@@ -80,14 +86,21 @@ void sh_query(SpatialHash* sh, float x, float y, int* out_ids, int* out_count, i
     int cy = (int)(y / sh->cell_size);
 
     for (int iy = cy - 1; iy <= cy + 1; iy++) {
-        for (int ix = cx - 1; ix <= cx + 1; ix++) {
+        for (int ix = cx - 1; ix <= cx + 1; ix++) 
+        // 3x3 block of cells around the particle's cell
+        
+        {
             if (ix < 0 || ix >= sh->grid_w || iy < 0 || iy >= sh->grid_h) {
                 continue;
             }
+            // boundary check to avoid out of bounds error
 
             int cell_id = ix + iy * sh->grid_w;
+            //adress
             int start   = sh->cell_start[cell_id];
+            // adress of paricles
             int end     = start + sh->cell_count[cell_id];
+            // no of particles in that cell
 
             for (int j = start; j < end; j++) {
                 if (*out_count >= max_out) {
@@ -95,6 +108,8 @@ void sh_query(SpatialHash* sh, float x, float y, int* out_ids, int* out_count, i
                 }
                 out_ids[*out_count] = sh->sorted_ids[j];
                 (*out_count)++;
+                // max particles to return is max_out, if more than that, return
+                //else increment the count and add the particle index to the out_ids array
             }
         }
     }

@@ -8,7 +8,7 @@
 
 #define SPH_H       30.0f   // smoothing radius (must match CELL_SIZE)
 #define SPH_MASS    1200000.0f
-#define SPH_K       50000000.0f  // pressure stiffness
+#define SPH_K       37500000.0f  // pressure stiffness
 #define MAX_NEIGHBORS 100
 
 // ── Kernels ─────────────────────────────────────────────────────
@@ -144,7 +144,7 @@ void sph_compute_forces(SimState* sim, SpatialHash* sh) {
 
 // ── Integration: Newton's 2nd law, then move + collide ──────────
 void sph_integrate(SimState* sim, float dt) {
-    dt = fminf(dt, 0.008f);
+    dt = fminf(dt, 0.006f);
     //prevtn lag
     float radius = sim->particle_radius;
     // imaginary radius jate boundary collision e particle er center theke radius distance e thake
@@ -165,8 +165,8 @@ void sph_integrate(SimState* sim, float dt) {
         }
 
         // Global damping (simulates energy loss to heat)
-        pi->vel.x *= 0.995f;
-        pi->vel.y *= 0.995f;
+        pi->vel.x *= 0.997f;
+        pi->vel.y *= 0.997f;
 
         pi->pos.x += pi->vel.x * dt;
         pi->pos.y += pi->vel.y * dt;
@@ -190,4 +190,4 @@ void sph_integrate(SimState* sim, float dt) {
         }
     }
 }
-// if goes out of bounds, reset position to boundary and reverse velocity with damping factor 0.4
+// if goes out of bounds, reset position to boundary and reverse velocity with damping factor 0.4X

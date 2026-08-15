@@ -145,6 +145,10 @@ void ui_draw_sidebar(SimState* sim, UIState* ui, ObstacleList* obs) {
     y += ELEM_H + ELEM_GAP;                                                    // move past button + gap
     GuiToggle((Rectangle){(float)PAD, (float)y, INNER_W, ELEM_H}, "Draw Walls", &ui->draw_mode);                       // toggle wall-drawing mode
 
+    // ── Interaction mode (pinned near particle counter) ──────────
+    DrawText(ui->mouse_repel ? "MODE: REPEL" : "MODE: ATTRACT",  WINDOW_W - 320, WINDOW_H - 70, 20,
+             ui->mouse_repel ? (Color){255, 100, 50, 255} : (Color){0, 200, 255, 255});
+
     // ── Particle counter (pinned to bottom) ─────────────────────
     DrawText(TextFormat("Particles: %d/%d", sim->count, MAX_PARTICLES), WINDOW_W - 320, WINDOW_H-40, 30, WHITE);                 // live count moved to right bottom corner 
 }

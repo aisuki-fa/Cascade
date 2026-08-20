@@ -25,7 +25,8 @@ typedef struct {
     Vector2 force;                                     // accumulated force vector, reset each physics step
     float   density;                                   // SPH density at this position (computed each frame)
     float   pressure;                                  // derived from density: max(0, k * (density - target))
-    Color   color;                                     // user-chosen spawn color
+    Color   color;
+    int fluid_type ;                                   // user-chosen spawn color
 } Particle;
 
 // ── Simulation state (Person A owns this, others read it) ─────────

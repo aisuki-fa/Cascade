@@ -36,12 +36,27 @@ void obs_clear(ObstacleList* obs) {
     obs->count = 0;      // clearing
 }
 
+// Freehand wall drawing: while Draw Walls is ON, left-drag previews a cyan line and release for permanent obstacle
 void obs_draw_update(ObstacleList* obs, Vector2 mouse, bool btn_down, bool btn_released, bool draw_mode) {
-    (void)obs;
-    (void)mouse;
-    (void)btn_down;
-    (void)btn_released;
-    (void)draw_mode;
+    if (!draw_mode) { obs->drawing = false; return; }                    // mode off cancels any half-drawn wall (prevents stale preview later)
+
+    if (btn_down && !obs->drawing && mouse.x > SIDEBAR_W) {              // checks at first draw frame: mouse btn, idle state, inside sim area
+        obs->drawing = true;                                             // enter drawing state
+        obs->draw_start = mouse;                                         // anchor saved at press point, not drag
+    }
+
+    if (obs->drawing) {
+        DrawLineEx(obs->draw_start, mouse, 3.0f, (Color){0,200,255,180});// live preview while dragging
+    }
+
+    if (btn_released && obs->drawing) {                                  // button released and now commit the wall
+        float dx = mouse.x - obs->draw_start.x;                          // check for rejecting accidental click-walls and
+        float dy = mouse.y - obs->draw_start.y;                          // calculate drag distance in both axes
+        if (obs->count < MAX_OBSTACLES && dx*dx + dy*dy > 25.0f)         // must be dragged >5px and check if it respects MAX num of obstacles cap
+            obs->list[obs->count++] = (Obstacle){OBS_LINE, obs->draw_start, mouse, 0, GRAY, true}; // draw wall at first free slot, increase count
+            // obs->list[obs->count++] = (Obstacle){OBS_LINE, obs->draw_start, mouse, 0, WHITE, true}; // uncomment for white walls instead of gray
+        obs->drawing = false;                                            // back to idle state, ready for next wall
+    }
 }
 
 void obs_render(ObstacleList* obs) {

@@ -53,9 +53,25 @@ void obs_render(ObstacleList* obs) {
     }
 }
 
+// Particle-wall collisions: push-out along normal & bounce at 40%(changeable) strength.
 void obs_resolve_collisions(ObstacleList* obs, Particle* p, int n, float radius) {
-    (void)obs;
-    (void)p;
-    (void)n;
-    (void)radius;
+    for (int i = 0; i < obs->count; i++) {                                           // loop thru all placed walls
+        if (!obs->list[i].active || obs->list[i].type != OBS_LINE) continue;         // skip inactive walls and non-line shapes
+        for (int j = 0; j < n; j++) {                                                // test all particles against this wall
+            Vector2 closest = closest_point_on_segment(obs->list[i].p1, obs->list[i].p2, p[j].pos); // nearest point on the wall to particle center
+            Vector2 diff = { p[j].pos.x - closest.x, p[j].pos.y - closest.y };       // vector from wall surface to particle center
+            float dist = sqrtf(diff.x * diff.x + diff.y * diff.y);                   // center-to-wall distance
+            if (dist < radius) {                                                     // check if particle overlaps the wall border
+                if (dist < 0.001f) { diff.x = 1; diff.y = 0; dist = 1; }             // center almost on wall: +x(avoid being stuck), dist=1 avoid /0
+                Vector2 normal = { diff.x / dist, diff.y / dist };                   // unit vector pointing out of the wall towards particle
+                p[j].pos.x = closest.x + normal.x * (radius + 0.5f);                 // new pos at distance radius plus extra space along normal
+                p[j].pos.y = closest.y + normal.y * (radius + 0.5f);
+                float vDotN = p[j].vel.x * normal.x + p[j].vel.y * normal.y;         // dot product to check if approaching or not, to add bounce 
+                if (vDotN < 0) {                                                     // only bounce if approaching as cos_theta is negative
+                    p[j].vel.x -= 1.4f * vDotN * normal.x;                           // cancel into-wall vel (-1), add bounce (-.4), dir normal
+                    p[j].vel.y -= 1.4f * vDotN * normal.y;
+                }
+            }
+        }
+    }
 }

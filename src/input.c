@@ -37,10 +37,11 @@ void input_update(SimState* sim, UIState* ui, ObstacleList* obs, Vector2 mouse, 
     if (IsKeyPressed(KEY_SPACE)) sim->paused = !sim->paused;             // toggle pause (once per press)
     if (IsKeyPressed(KEY_BACKSPACE) || IsKeyPressed(KEY_X))              // Backspace or X = clear particles 
         sim->reset_requested = true;                                     // signal main.c to clear all particles
-    if (ui)                                                              // only check if ui exists (not NULL) 
-        if (IsKeyPressed(KEY_A)) ui->mouse_repel = false;                // Attract mode
+    if (ui) {                                                            // only check keys if ui exists (not NULL)
+        if (IsKeyPressed(KEY_A)) ui->mouse_repel = false;                // Attract mod
         else if (IsKeyPressed(KEY_R)) ui->mouse_repel = true;            // Repulse mode
-    if (ui && IsKeyPressed(KEY_D)) ui->draw_mode = !ui->draw_mode;       // toggle wall-drawing mode
+        if (IsKeyPressed(KEY_D)) ui->draw_mode = !ui->draw_mode;         // toggle wall-drawing mode
+    }
 
     last_mouse = mouse;                                                  // update last mouse position for next frame
 }

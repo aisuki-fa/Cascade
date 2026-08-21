@@ -36,27 +36,67 @@ void obs_clear(ObstacleList* obs) {
     obs->count = 0;      // clearing
 }
 
+// Circle obstacle is approximated as 8 line segments forming an octagon for simplicity and performance 
+void obs_add_circle(ObstacleList* obs, Vector2 c, float r) {
+    if (obs->count + 8 > MAX_OBSTACLES || r < 5.0f) return;              // dragged >5px to avoid misclick, check if within MAX num of obstacles cap 
+    Vector2 prev = { c.x + r, c.y };                                     // starting at 0 degrees with x-axis (right of center)
+    for (int i = 1; i <= 8; i++) {                                       // octagon loop; 8 rim segments
+        float a = i * 45.0f * DEG2RAD;                                   // convert degrees to radians for trig functions
+        Vector2 next = { c.x + cosf(a) * r, c.y + sinf(a) * r };         // calc next rim point using polar coordinates 
+        obs->list[obs->count++] = (Obstacle){OBS_LINE, prev, next, 0, GRAY, true}; // add line segment from prev to next
+        prev = next;                                                     // update prev for next iteration
+    }
+}
+
+// Rectangular obstacle is approximated as 4 line segments for simplicity and performance
+void obs_add_rect(ObstacleList* obs, Vector2 a, Vector2 b) {
+    if (obs->count + 4 > MAX_OBSTACLES || fabsf(b.x - a.x) < 5.0f || fabsf(b.y - a.y) < 5.0f) return;  // misclick and count check
+    Vector2 tl = { fminf(a.x, b.x), fminf(a.y, b.y) };                                                 // top left corner (min x, min y)
+    Vector2 br = { fmaxf(a.x, b.x), fmaxf(a.y, b.y) };                                                 // bottom right corner (max x, max y)
+    Vector2 tr = { br.x, tl.y }, bl = { tl.x, br.y };                                                  // top right and bottom left corners
+    obs->list[obs->count++] = (Obstacle){OBS_LINE, tl, tr, 0, GRAY, true};                             // top edge line drawn
+    obs->list[obs->count++] = (Obstacle){OBS_LINE, tr, br, 0, GRAY, true};                             // right edge line drawn
+    obs->list[obs->count++] = (Obstacle){OBS_LINE, br, bl, 0, GRAY, true};                             // bottom edge line drawn
+    obs->list[obs->count++] = (Obstacle){OBS_LINE, bl, tl, 0, GRAY, true};                             // left edge line drawn
+}
+
 // Freehand wall drawing: while Draw Walls is ON, left-drag previews a cyan line and release for permanent obstacle
 void obs_draw_update(ObstacleList* obs, Vector2 mouse, bool btn_down, bool btn_released, bool draw_mode) {
-    if (!draw_mode) { obs->drawing = false; return; }                    // mode off cancels any half-drawn wall (prevents stale preview later)
+    int shape = obs->drop_shape;                                         // which drop tool is armed as 0=none, 1=circle, 2=rect
+    if (!draw_mode && !shape) { obs->drawing = false; return; }          // no tool on cancels any half-drawn shape to prevent stale preview
 
-    if (btn_down && !obs->drawing && mouse.x > SIDEBAR_W) {              // checks at first draw frame: mouse btn, idle state, inside sim area
+    if (btn_down && !obs->drawing && mouse.x > SIDEBAR_W) {              // checks at first draw frame if mouse btn, idle state, inside sim area
         obs->drawing = true;                                             // enter drawing state
         obs->draw_start = mouse;                                         // anchor saved at press point, not drag
     }
 
-    if (obs->drawing) {
-        DrawLineEx(obs->draw_start, mouse, 3.0f, (Color){0,200,255,180});// live preview while dragging
+    if (!obs->drawing) return;                                           // nothing mid-drag yet: skip preview and commit
+
+    float dx = mouse.x - obs->draw_start.x;                              // check for rejecting accidental click-walls and
+    float dy = mouse.y - obs->draw_start.y;                              // calculate drag distance in both axes
+    Color preview = (Color){0,200,255,180};                              // cyan preview color shared by all three tools
+
+    if (shape == 1) {                                                    // CIRCLE; anchor is the center, drag distance is the radius
+        float r = sqrtf(dx*dx + dy*dy);                                  // distance from center to cursor 
+        if (r > 5.0f) DrawCircleLines((int)obs->draw_start.x, (int)obs->draw_start.y, r, preview);  // live growing circle while dragging
+        if (btn_released) obs_add_circle(obs, obs->draw_start, r);       // create octagon; helper checks obstacle cap itself
+
+    } else if (shape == 2) {                                             // RECT: anchor and cursor are opposite corners, works in any direction
+        if (fabsf(dx) > 5.0f && fabsf(dy) > 5.0f)                        // both axes must clear 5px else it's a sliver, not a box
+            DrawRectangleLines((int)fminf(obs->draw_start.x, mouse.x), (int)fminf(obs->draw_start.y, mouse.y),
+                               (int)fabsf(dx), (int)fabsf(dy), preview); // live outline while dragging (top-left corner + width/height)
+        if (btn_released) obs_add_rect(obs, obs->draw_start, mouse);     // commit raw corners; helper normalizes and cap-checks itself
+
+    } else {                                                            
+        DrawLineEx(obs->draw_start, mouse, 3.0f, preview);               // live preview while dragging
+        if (btn_released) {                                              // button released and now commit the wall
+            if (obs->count < MAX_OBSTACLES && dx*dx + dy*dy > 25.0f)     // must be dragged >5px and check if it respects MAX num of obstacles cap
+                obs->list[obs->count++] = (Obstacle){OBS_LINE, obs->draw_start, mouse, 0, GRAY, true}; // draw wall at first free slot, increase count
+                // obs->list[obs->count++] = (Obstacle){OBS_LINE, obs->draw_start, mouse, 0, WHITE, true}; // uncomment for white instead of gray
+        }
     }
 
-    if (btn_released && obs->drawing) {                                  // button released and now commit the wall
-        float dx = mouse.x - obs->draw_start.x;                          // check for rejecting accidental click-walls and
-        float dy = mouse.y - obs->draw_start.y;                          // calculate drag distance in both axes
-        if (obs->count < MAX_OBSTACLES && dx*dx + dy*dy > 25.0f)         // must be dragged >5px and check if it respects MAX num of obstacles cap
-            obs->list[obs->count++] = (Obstacle){OBS_LINE, obs->draw_start, mouse, 0, GRAY, true}; // draw wall at first free slot, increase count
-            // obs->list[obs->count++] = (Obstacle){OBS_LINE, obs->draw_start, mouse, 0, WHITE, true}; // uncomment for white walls instead of gray
-        obs->drawing = false;                                            // back to idle state, ready for next wall
-    }
+    if (btn_released) obs->drawing = false;                             // back to idle state, ready for next wall or shape
 }
 
 void obs_render(ObstacleList* obs) {

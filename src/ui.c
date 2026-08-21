@@ -22,7 +22,7 @@
 #define BG_FLUID    260                   // FLUID: 4 sliders + value boxes + header
 #define BG_SPAWN    170                   // SPAWN COLOR: color picker + header
 #define BG_VIZ      70                    // VISUALIZE: dropdown + header
-#define BG_OBS      185                   // OBSTACLES: 4 buttons + toggle + header
+#define BG_OBS      217                   // OBSTACLES: 4 buttons + toggle + header + 2 shape buttons
 
 // Draws a dark rounded box with a numeric value inside
 static void DrawValueBox(float value, const char* fmt, int x, int y) {
@@ -144,6 +144,15 @@ void ui_draw_sidebar(SimState* sim, UIState* ui, ObstacleList* obs) {
     if (GuiButton((Rectangle){(float)PAD, (float)y, INNER_W, ELEM_H}, "Clear"))  obs_clear(obs);                       // remove all obstacles
     y += ELEM_H + ELEM_GAP;                                                    // move past button + gap
     GuiToggle((Rectangle){(float)PAD, (float)y, INNER_W, ELEM_H}, "Draw Walls", &ui->draw_mode);                       // toggle wall-drawing mode
+    y += ELEM_H + ELEM_GAP;                                                    // move past toggle + gap
+    if (GuiButton((Rectangle){(float)PAD, (float)y, INNER_W/2 - 3, ELEM_H}, "Circle")) {
+        obs->drop_shape = (obs->drop_shape == 1) ? 0 : 1;                      // click again to disarm back to spawning
+        ui->draw_mode = false;                                                 // a shape tool on turns wall mode off
+    }
+    if (GuiButton((Rectangle){(float)PAD + INNER_W/2 + 3, (float)y, INNER_W/2 - 3, ELEM_H}, "Rect")) {
+        obs->drop_shape = (obs->drop_shape == 2) ? 0 : 2;                      // click again to disarm back to spawning
+        ui->draw_mode = false;                                                 // a shape tool on turns wall mode off
+    }
 
     // ── Interaction mode (pinned near particle counter) ──────────
     DrawText(ui->mouse_repel ? "MODE: REPEL" : "MODE: ATTRACT",  WINDOW_W - 320, WINDOW_H - 70, 20,

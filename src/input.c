@@ -6,8 +6,8 @@
 void input_update(SimState* sim, UIState* ui, ObstacleList* obs, Vector2 mouse, float dt) {
     static Vector2 last_mouse = {0};                   // persists for every frame to track mouse position
 
-    // only spawn if mouse is in the simulation area, left click is held, and not in draw mode
-    bool can_spawn = mouse.x > SIDEBAR_W && IsMouseButtonDown(MOUSE_BUTTON_LEFT) && !(ui && ui->draw_mode);
+    // only spawn if mouse is in the simulation area, left click is held, and not in draw mode, and not choosing a preset shape (circle or rect)
+    bool can_spawn = mouse.x > SIDEBAR_W && IsMouseButtonDown(MOUSE_BUTTON_LEFT) && !(ui && ui->draw_mode) && !(obs && obs->drop_shape);
     if (can_spawn) {                                                                       // spawn legitimacy
         Color color = ui ? ui->spawn_color : (Color){135, 206, 235, 255};                  // default light blue if no UI
         Vector2 spawn_vel = Vector2Scale(Vector2Subtract(mouse, last_mouse), 3.0f);        // direction + speed * 3
@@ -40,7 +40,7 @@ void input_update(SimState* sim, UIState* ui, ObstacleList* obs, Vector2 mouse, 
     if (ui) {                                                            // only check keys if ui exists (not NULL)
         if (IsKeyPressed(KEY_A)) ui->mouse_repel = false;                // Attract mod
         else if (IsKeyPressed(KEY_R)) ui->mouse_repel = true;            // Repulse mode
-        if (IsKeyPressed(KEY_D)) ui->draw_mode = !ui->draw_mode;         // toggle wall-drawing mode
+        if (IsKeyPressed(KEY_D)) { ui->draw_mode = !ui->draw_mode; obs->drop_shape = 0; } // toggle wall-drawing mode (disarms any shape tool)
     }
 
     last_mouse = mouse;                                                  // update last mouse position for next frame

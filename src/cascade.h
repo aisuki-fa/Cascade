@@ -78,6 +78,7 @@ typedef struct {
     int      count;                                    // how many obstacles are active
     bool     drawing;                                  // true = user is dragging to draw a new one
     Vector2  draw_start;                               // mouse press position (start of drag)
+    int      drop_shape;                               // 0=none, 1=circle, 2=rect
 } ObstacleList;
 
 #endif // CASCADE_H                                    // end of include guard

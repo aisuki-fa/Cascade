@@ -8,7 +8,7 @@
 
 #define SPH_H       30.0f   // smoothing radius (must match CELL_SIZE)
 #define SPH_MASS    1200000.0f
-#define SPH_K       37500000.0f  // pressure stiffness
+#define SPH_K       37500000.0f  // pressure stiffness (softened for water-like behavior)
 #define MAX_NEIGHBORS 100
 
 // ── Kernels ─────────────────────────────────────────────────────
@@ -84,7 +84,7 @@ void sph_compute_density(SimState* sim, SpatialHash* sh) {
 }
 // guardrails density never 0 to avoid 0 division and pressure never negative to avoid attractive forces
 // ── Forces: pressure + viscosity + gravity ──────────────────────
-void sph_compute_forces(SimState* sim, SpatialHash* sh) {
+sph_compute_forces(SimState* sim, SpatialHash* sh) {
     for (int i = 0; i < sim->count; i++) {
         sim->particles[i].force = (Vector2){ 0, 0 };
 
@@ -128,6 +128,27 @@ void sph_compute_forces(SimState* sim, SpatialHash* sh) {
         // force=visc*mas*distancefunction/density
         // speed diff *force =force
 
+        // Surface tension (cohesion model)
+        float color_grad_x = 0, color_grad_y = 0, color_laplacian = 0;
+        for (int j = 0; j < out_count; j++) {
+            int n = out_ids[j];
+            if (n == i) continue;
+
+            Vector2 diff = Vector2Subtract(sim->particles[i].pos, sim->particles[n].pos);
+            float r = Vector2Length(diff);
+            if (r < 0.001f || r >= SPH_H) continue;
+
+            Vector2 dir = Vector2Normalize(diff);
+            float kernel = kernel_spiky_grad(r, SPH_H);
+            color_grad_x += dir.x * kernel / sim->particles[n].density;
+            color_grad_y += dir.y * kernel / sim->particles[n].density;
+            color_laplacian += kernel_viscosity_lap(r, SPH_H) / sim->particles[n].density;
+        }
+        // Surface tension = -sigma * laplacian * normal / density
+        float sigma = sim->surface_tension;
+        sim->particles[i].force.x += -sigma * color_laplacian * color_grad_x / sim->particles[i].density;
+        sim->particles[i].force.y += -sigma * color_laplacian * color_grad_y / sim->particles[i].density;
+
         sim->particles[i].force.y += sim->gravity * sim->particles[i].density;
         // gravity tai shdhu y-axis e kaj korbe f=mg density used as mass replacement
 
@@ -140,7 +161,6 @@ void sph_compute_forces(SimState* sim, SpatialHash* sh) {
         }
     }
 }
-// capping forces to 5k  divide by magnitude to get unit vector and multiply by 5k to get new force vector
 
 // ── Integration: Newton's 2nd law, then move + collide ──────────
 void sph_integrate(SimState* sim, float dt) {
@@ -190,4 +210,4 @@ void sph_integrate(SimState* sim, float dt) {
         }
     }
 }
-// if goes out of bounds, reset position to boundary and reverse velocity with damping factor 0.4X
+// if goes out of bounds, reset position to boundary and reverse velocity with damping factor 0.4

@@ -41,8 +41,12 @@ typedef struct {
     float particle_radius;                             // visual + collision radius in px (3–16, default 3)
 
     bool paused;                                       // toggling pause and resume
-    bool reset_requested;                              // true = main.c calls sim_reset(), then clears
+    bool reset_requested; 
+    float surface_tension;  // default 0.1
+                                 // true = main.c calls sim_reset(), then clears
 } SimState;
+
+
 
 // ── UI state (Person C owns this, others read it) ─────────────────
 typedef enum {
@@ -78,7 +82,7 @@ typedef struct {
     int      count;                                    // how many obstacles are active
     bool     drawing;                                  // true = user is dragging to draw a new one
     Vector2  draw_start;                               // mouse press position (start of drag)
-    int      drop_shape;                               // 0=none, 1=circle, 2=rect
+    int      drop_shape;                               // 0 = none, 1 = circle, 2 = rect — armed shape-drop tool
 } ObstacleList;
 
 #endif // CASCADE_H                                    // end of include guard

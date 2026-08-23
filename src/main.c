@@ -22,6 +22,7 @@ int main(void) {
     sim.viscosity = 0.5f;
     sim.target_density = 300.0f;
     sim.particle_radius = 3.0f;
+    sim.surface_tension = 5.0f;   // start high so beading is visible while testing; tune down later
     sim.paused = false;
     sim.reset_requested = false;
 

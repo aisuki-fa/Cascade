@@ -84,7 +84,7 @@ void sph_compute_density(SimState* sim, SpatialHash* sh) {
 }
 // guardrails density never 0 to avoid 0 division and pressure never negative to avoid attractive forces
 // ── Forces: pressure + viscosity + gravity ──────────────────────
-sph_compute_forces(SimState* sim, SpatialHash* sh) {
+void sph_compute_forces(SimState* sim, SpatialHash* sh) {
     for (int i = 0; i < sim->count; i++) {
         sim->particles[i].force = (Vector2){ 0, 0 };
 

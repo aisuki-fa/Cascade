@@ -10,6 +10,7 @@
 #define SPH_MASS    1200000.0f
 #define SPH_K       37500000.0f  // pressure stiffness (softened for water-like behavior)
 #define MAX_NEIGHBORS 100
+#define VISC_BOOST  25.0f
 
 // ── Kernels ─────────────────────────────────────────────────────
 static inline float kernel_poly6(float r_sq, float h) {
@@ -119,7 +120,7 @@ void sph_compute_forces(SimState* sim, SpatialHash* sh) {
             sim->particles[i].force.y += dir.y * f_p;
             // scalar force theikka vector force adjusted for direction
 
-            float f_v = sim->viscosity * SPH_MASS
+            float f_v = sim->viscosity * VISC_BOOST * SPH_MASS
                         * kernel_viscosity_lap(r, SPH_H)
                         / sim->particles[n].density;
             sim->particles[i].force.x += (sim->particles[n].vel.x - sim->particles[i].vel.x) * f_v;

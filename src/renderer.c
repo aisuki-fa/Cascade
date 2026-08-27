@@ -50,10 +50,10 @@ void render_density(SimState* sim){
         float t= sim->particles[i].density / sim->target_density;
         // t=fminf(fmaxf(t,0),2);
         if(t<1){
-            c= lerp_color((Color){200,186,126}, (Color){78, 80, 38}, t);
+            c= lerp_color((Color){200,186,126}, (Color){157, 193, 131}, t);
         }
         else{
-            c= lerp_color((Color){73, 57, 44},(Color){78, 80, 38},  1/t);
+            c= lerp_color((Color){73, 57, 44},(Color){157, 193, 131},  1/t);
             
         }
         DrawCircleV(sim->particles[i].pos,sim->particle_radius,c);
@@ -75,19 +75,8 @@ void render_hud(int count, int fps, bool paused) {
     else{
         DrawText(TextFormat("Ongoing"), WINDOW_W - 120, 45, 30, fc);
     }
+    DrawText("Space: Pause  |  R: Reset  |  D: Draw", SIDEBAR_W+10, WINDOW_H-20, 14, (Color){90,90,120,255});
 }
-void render_particles(SimState* sim, SpatialHash* sh, UIState* ui) {
-    (void)sh;
-        DrawLine(SIDEBAR_W, 0, SIDEBAR_W, WINDOW_H,  (Color){25,40,72,255});
-    if(ui->render_mode==0)
-    render_blended(sim,sh);
-    else if (ui->render_mode==2)
-    render_density(sim);
-    else if (ui->render_mode==1)
-    render_velocity(sim);
-
-}
-
 void render_blended(SimState* sim,SpatialHash* sh){
     for(int i=0;i<sim->count;i++){
         int out_ids[100];
@@ -109,4 +98,14 @@ void render_blended(SimState* sim,SpatialHash* sh){
             else c=sim->particles[i].color;
             DrawCircleV(sim->particles[i].pos,sim->particle_radius,c);
     }
+}
+void render_particles(SimState* sim, SpatialHash* sh, UIState* ui) {
+    (void)sh;
+        DrawLine(SIDEBAR_W, 0, SIDEBAR_W, WINDOW_H,  (Color){25,40,72,255});
+    if(ui->render_mode==0)
+    render_blended(sim,sh);
+    else if (ui->render_mode==2)
+    render_density(sim);
+    else if (ui->render_mode==1)
+    render_velocity(sim);
 }

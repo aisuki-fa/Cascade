@@ -41,6 +41,7 @@ void input_update(SimState* sim, UIState* ui, ObstacleList* obs, Vector2 mouse, 
         if (IsKeyPressed(KEY_A)) ui->mouse_repel = false;                // Attract mod
         else if (IsKeyPressed(KEY_R)) ui->mouse_repel = true;            // Repulse mode
         if (IsKeyPressed(KEY_D)) { ui->draw_mode = !ui->draw_mode; obs->drop_shape = 0; } // toggle wall-drawing mode (disarms any shape tool)
+        if (IsKeyPressed(KEY_T)) theme_dark = !theme_dark;               // toggle dark/light theme
     }
 
     last_mouse = mouse;                                                  // update last mouse position for next frame

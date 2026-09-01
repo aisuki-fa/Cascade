@@ -6,6 +6,7 @@
 #include <stdbool.h>                                   // bool, true, false
 #include <stdlib.h>                                    // rand() for particle spawn random spread
 #include <math.h>                                      // sqrt, pow, fabs
+#include "theme.h"                                     // theme_dark, Theme, theme_get()
 
 // ── Window & layout constants ─────────────────────────────────────
 #define WINDOW_W        1400                           // total window width in pixels
@@ -62,7 +63,6 @@ typedef struct {
     bool        draw_mode;                             // true = left-click draws walls, not particles
     bool        mouse_attract;                         // right click held (later)
     bool        mouse_repel;                           // middle click held (later)
-    Font        title_font;                            // custom font
 } UIState;
 
 // ── Obstacle ──────────────────────────────────────────────────────

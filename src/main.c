@@ -16,6 +16,7 @@ static void sim_reset(SimState* sim) {
 int main(void) {
     InitWindow(WINDOW_W, WINDOW_H, "Cascade - SPH Fluid Simulator");
     SetTargetFPS(60);
+    theme_load_fonts();
 
     SimState sim = {0};
     sim.gravity = 500.0f;
@@ -59,8 +60,7 @@ int main(void) {
 
         // Draw
         BeginDrawing();
-        ClearBackground((Color){7, 9, 26, 255});
-        // ClearBackground((Color){255, 255, 255, 255});
+        ClearBackground(theme_get().bg);
 
         render_particles(&sim, &sh, &ui);
         obs_render(&obs);
@@ -74,6 +74,7 @@ int main(void) {
         EndDrawing();
     }
 
+    theme_unload_fonts();
     CloseWindow();
     return 0;
 }

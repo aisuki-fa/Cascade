@@ -64,18 +64,22 @@ void render_density(SimState* sim){
 }
 void render_hud(int count, int fps, bool paused) {
     (void)count;
+    Theme t = theme_get();
     Color fc = fps > 50 ? GREEN : fps > 30 ? YELLOW : RED;
-    DrawText(TextFormat("FPS: %d", fps), WINDOW_W - 120, 12, 30, fc);
+    float w_fps = MeasureTextEx(font_ui, TextFormat("FPS: %d", fps), 30, 1).x;
+    DrawTextEx(font_ui, TextFormat("FPS: %d", fps), (Vector2){ WINDOW_W - 16 - w_fps, 12 }, 30, 1, fc);
     if (paused) {
         DrawRectangle(SIDEBAR_W, 0, SIM_W, WINDOW_H, (Color){251, 199, 191, 100});
         const char* msg = "|| PAUSED ||";
-        int w = MeasureText(msg, 28);
-        DrawText(msg, SIDEBAR_W + (SIM_W - w) / 2, WINDOW_H / 2 - 14, 28, (Color){255, 255, 255, 200});
+        Vector2 m = MeasureTextEx(font_ui, msg, 28, 1);        // width/height via Comfortaa
+        DrawTextEx(font_ui, msg, (Vector2){ SIDEBAR_W + (SIM_W - m.x)/2, WINDOW_H/2 - m.y/2 }, 28, 1, t.text);
     }
     else{
-        DrawText(TextFormat("Ongoing"), WINDOW_W - 120, 45, 30, fc);
+        float w_on = MeasureTextEx(font_ui, "Ongoing", 30, 1).x;
+    DrawTextEx(font_ui, "Ongoing", (Vector2){ WINDOW_W - 16 - w_on, 45 }, 30, 1, fc);
     }
-    DrawText("Space: Pause  |  R: Reset  |  D: Draw", SIDEBAR_W+10, WINDOW_H-20, 14, (Color){90,90,120,255});
+    const char* hint = "Left: Spawn  |  Right: Attract(A) / Repel(R)  |  Space: Pause  |  D: Draw  |  T: Theme  |  X: Clear";
+    DrawTextEx(font_ui_small, hint, (Vector2){ SIDEBAR_W + 10, WINDOW_H - 20 }, 14, 1, t.dim);
 }
 void render_blended(SimState* sim,SpatialHash* sh){
     for(int i=0;i<sim->count;i++){

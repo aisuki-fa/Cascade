@@ -10,7 +10,7 @@ typedef struct {
     Color panel;            // sidebar background
     Color section;          // section card fill
     Color card;             // raised control / value box
-    Color border;           // 1px card border
+    Color border;           // 1px card border and sidebar-sim area separator
     Color border_hi;        // hover / focused border
     Color text;             // primary text
     Color dim;              // secondary text
@@ -25,7 +25,7 @@ typedef struct {
     Color repel;            // repel-mode indicator
 } Theme;
 
-Theme theme_get(void);
+Theme theme_get(void);      // returns DARK or LIGHT based on theme_dark
 
 // Custom fonts (defined in theme.c, loaded via theme_load_fonts()).
 extern Font font_title;          // Liber (bake 36) — CASCADE logo

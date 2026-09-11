@@ -105,7 +105,6 @@ void render_blended(SimState* sim,SpatialHash* sh){
 }
 void render_particles(SimState* sim, SpatialHash* sh, UIState* ui) {
     (void)sh;
-        DrawLine(SIDEBAR_W, 0, SIDEBAR_W, WINDOW_H,  (Color){25,40,72,255});
     if(ui->render_mode==0)
     render_blended(sim,sh);
     else if (ui->render_mode==2)

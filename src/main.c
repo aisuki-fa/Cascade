@@ -16,7 +16,7 @@ static void sim_reset(SimState* sim) {
 int main(void) {
     InitWindow(WINDOW_W, WINDOW_H, "Cascade - SPH Fluid Simulator");
     SetTargetFPS(60);
-    theme_load_fonts();
+    theme_load_fonts(); // Loads custom fonts along w ith bilinear filtering and mipmaps for subtle blur
 
     SimState sim = {0};
     sim.gravity = 500.0f;
@@ -41,7 +41,8 @@ int main(void) {
 
         // Handle reset
         if (sim.reset_requested) {
-            sim_reset(&sim);
+            sim_reset(&sim);              // particles cleared
+            obs_clear(&obs);              // obstacles cleared 
             sim.reset_requested = false;
         }
 

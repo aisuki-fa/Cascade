@@ -8,6 +8,7 @@
 #include "input.h"
 #include "ui.h"
 #include "obstacles.h"
+#include "marching_squares.h"
 
 static void sim_reset(SimState* sim) {
     sim->count = 0;
@@ -35,6 +36,8 @@ int main(void) {
     SpatialHash sh = {0};
     ObstacleList obs = {0};
 
+    static float ms_field[MS_W][MS_H]; // static: too large for the stack
+
     while (!WindowShouldClose()) {
         float dt = GetFrameTime();
         dt = fminf(dt, 0.02f);  // cap for lag spikes
@@ -59,6 +62,10 @@ int main(void) {
         Vector2 mouse = GetMousePosition();
         input_update(&sim, &ui, &obs, mouse, dt);
 
+        // Marching squares field (test)
+        // ms_clear_field(ms_field);
+        ms_build_field(ms_field, &sim);
+
         // Draw
         BeginDrawing();
         ClearBackground(theme_get().bg);
@@ -70,6 +77,7 @@ int main(void) {
             IsMouseButtonReleased(MOUSE_BUTTON_LEFT),
             ui.draw_mode);
         ui_draw_sidebar(&sim, &ui, &obs);
+        ms_draw(ms_field, RED);//marching square test
         render_hud(sim.count, GetFPS(), sim.paused);
 
         EndDrawing();

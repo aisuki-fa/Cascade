@@ -57,7 +57,7 @@ void render_density(SimState* sim){
 void render_hud(int count, int fps, bool paused) {
     (void)count;
     Theme t = theme_get();
-    Color fc = fps > 50 ? GREEN : fps > 30 ? YELLOW : RED;
+    Color fc = fps > 50 ? t.ok : fps > 30 ? t.warn : t.danger;
     float w_fps = MeasureTextEx(font_ui, TextFormat("FPS: %d", fps), 30, 1).x;
     DrawTextEx(font_ui, TextFormat("FPS: %d", fps), (Vector2){ WINDOW_W - 16 - w_fps, 12 }, 30, 1, fc);
     if (paused) {
@@ -70,7 +70,7 @@ void render_hud(int count, int fps, bool paused) {
         float w_on = MeasureTextEx(font_ui, "Ongoing", 30, 1).x;
     DrawTextEx(font_ui, "Ongoing", (Vector2){ WINDOW_W - 16 - w_on, 45 }, 30, 1, fc);
     }
-    const char* hint = "Left: Spawn  |  Right: Attract(A) / Repel(R)  |  Space: Pause  |  D: Draw  |  T: Theme  |  X: Clear";
+    const char* hint = "Left: Spawn  |  Right: Attract(A) / Repel(R)  |  Space: Pause  |  D: Draw  |  T: Theme  |  F: Fluidity  |  X: Clear";
     DrawTextEx(font_ui_small, hint, (Vector2){ SIDEBAR_W + 10, WINDOW_H - 20 }, 14, 1, t.dim);
 }
 void render_blended(SimState* sim,SpatialHash* sh){

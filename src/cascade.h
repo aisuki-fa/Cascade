@@ -59,6 +59,7 @@ typedef enum {
 typedef struct {
     Color       spawn_color;                           // color picker writes, input.c reads
     RenderMode  render_mode;                           // dropdown writes, renderer.c reads
+    bool        show_ms; 
     float       mouse_radius;                          // attraction/repulsion radius (later)
     bool        draw_mode;                             // true = left-click draws walls, not particles
     bool        mouse_attract;                         // right click held (later)

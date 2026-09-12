@@ -17,7 +17,7 @@
 #define VALBOX_W    56                    // value readout box width (px)
 
 // ── Section background heights ─────────────────────────────────
-#define BG_SIM      48                    // SIMULATION: 3 buttons (pause/reset/theme) + header
+#define BG_SIM      80                    // SIMULATION: 3 buttons (pause/reset/theme) + header
 #define BG_FLUID    260                   // FLUID: 4 sliders + value boxes + header
 #define BG_SPAWN    170                   // SPAWN COLOR: color picker + header
 #define BG_VIZ      70                    // VISUALIZE: dropdown + header
@@ -87,6 +87,11 @@ void ui_draw_sidebar(SimState* sim, UIState* ui, ObstacleList* obs) {
         sim->reset_requested = true;                     // main.c checks this and calls sim_reset()
     if (GuiButton((Rectangle){(float)(PAD+2*(box_w+ELEM_GAP)), (float)y, box_w, ELEM_H}, theme_dark ? "Dark" : "Light"))
         theme_dark = !theme_dark;                        // toggle dark/light theme
+    y += ELEM_H + ELEM_GAP;
+
+    Rectangle grd = {(float)PAD, (float)y, INNER_W, ELEM_H};               // full-width, Draw-Walls style
+    if (GuiButton(grd, "Fluidity")) ui->show_ms = !ui->show_ms;                // toggle overlay
+    if (ui->show_ms) DrawRectangleLinesEx(grd, 2.0f, t.accent);            // accent ring when armed
     y += ELEM_H + SEC_GAP;
 
     // ═══ FLUID ══════════════════════════════════════════════════

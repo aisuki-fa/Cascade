@@ -32,6 +32,7 @@ int main(void) {
     ui.spawn_color = (Color){135, 206, 235, 255};
     ui.render_mode = RENDER_SOLID;
     ui.draw_mode = false;
+    ui.show_ms = false;
 
     SpatialHash sh = {0};
     ObstacleList obs = {0};
@@ -64,7 +65,10 @@ int main(void) {
 
         // Marching squares field (test)
         // ms_clear_field(ms_field);
-        ms_build_field(ms_field, &sim);
+        if (ui.show_ms) {
+            ms_build_field(ms_field, &sim);
+            ms_draw(ms_field, RED);
+        }
 
         // Draw
         BeginDrawing();
@@ -77,7 +81,6 @@ int main(void) {
             IsMouseButtonReleased(MOUSE_BUTTON_LEFT),
             ui.draw_mode);
         ui_draw_sidebar(&sim, &ui, &obs);
-        ms_draw(ms_field, RED);//marching square test
         render_hud(sim.count, GetFPS(), sim.paused);
 
         EndDrawing();

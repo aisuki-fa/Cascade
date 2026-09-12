@@ -73,16 +73,17 @@ typedef struct {
     Vector2 p1;                                        // rect: top-left, circle: center, line: point A
     Vector2 p2;                                        // rect: width/height, circle: unused, line: point B
     float   radius;                                    // OBS_CIRCLE only
-    Color   color;                                     // display color
     bool    active;                                    // false = skip collision detection
 } Obstacle;
+
+typedef enum { DROP_NONE = 0, DROP_CIRCLE = 1, DROP_RECT = 2 } DropTool;
 
 typedef struct {
     Obstacle list[MAX_OBSTACLES];                      // fixed array of 64 obstacles
     int      count;                                    // how many obstacles are active
     bool     drawing;                                  // true = user is dragging to draw a new one
     Vector2  draw_start;                               // mouse press position (start of drag)
-    int      drop_shape;                               // 0 = none, 1 = circle, 2 = rect — armed shape-drop tool
+    DropTool  drop_shape;                              // enums for shape-drop tool
 } ObstacleList;
 
 #endif // CASCADE_H                                    // end of include guard

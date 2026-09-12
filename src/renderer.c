@@ -1,15 +1,6 @@
 #include "cascade.h"
 #include "renderer.h"
-#include<math.h>
-void render_blended(SimState* sim,SpatialHash* sh );
-void render_solid(SimState* sim);
-void render_velocity(SimState* sim);
-void render_density(SimState* sim);
-void render_particles(SimState* sim, SpatialHash* sh, UIState* ui);
-void render_hud(int count, int fps, bool paused);
-
-
-
+#include <math.h>
 
 Color lerp_color(Color a,Color b ,float t){
 t=fminf(fmaxf(t,0),1); //clamp t to 0,1
@@ -19,7 +10,6 @@ return(Color){
     (int)(a.b +(b.b-a.b)*t),255
 
 };}
-
 
 void render_solid(SimState* sim){//renders particles into circles 
     for(int i=sim->count-1;i>=0;i--){//i for each particle 
@@ -44,6 +34,7 @@ void render_velocity(SimState* sim){
     DrawCircleV(sim->particles[i].pos,sim->particle_radius,c);
     }
 }
+
 void render_density(SimState* sim){
     Color c;
     for(int i=0;i<sim->count;i++){
@@ -62,6 +53,7 @@ void render_density(SimState* sim){
     }
 
 }
+
 void render_hud(int count, int fps, bool paused) {
     (void)count;
     Theme t = theme_get();
@@ -103,12 +95,12 @@ void render_blended(SimState* sim,SpatialHash* sh){
             DrawCircleV(sim->particles[i].pos,sim->particle_radius,c);
     }
 }
+
 void render_particles(SimState* sim, SpatialHash* sh, UIState* ui) {
-    (void)sh;
-    if(ui->render_mode==0)
-    render_blended(sim,sh);
-    else if (ui->render_mode==2)
-    render_density(sim);
-    else if (ui->render_mode==1)
-    render_velocity(sim);
+    if (ui->render_mode == RENDER_SOLID)
+        render_blended(sim, sh);
+    else if (ui->render_mode == RENDER_VELOCITY)
+        render_velocity(sim);
+    else if (ui->render_mode == RENDER_DENSITY)
+        render_density(sim);
 }

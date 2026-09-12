@@ -7,7 +7,6 @@
 // ── Layout constants ───────────────────────────────────────────
 #define PAD         12                    // left/right padding inside sidebar (px)
 #define INNER_W     196                   // content width: SIDEBAR_W - 2*PAD
-#define SEC_HDR_Y   11                    // section header font size (px)
 #define SEC_HDR_H   18                    // section header height + gap below
 #define ELEM_H      26                    // button / toggle height (px)
 #define ELEM_GAP    6                     // gap between sibling elements in a section
@@ -63,7 +62,7 @@ void ui_draw_sidebar(SimState* sim, UIState* ui, ObstacleList* obs) {
     GuiSetStyle(BUTTON, TEXT_COLOR_DISABLED, ColorToGui(t.faint));            // disabled text
     GuiSetStyle(BUTTON, TEXT_SIZE, 11);                                       // button text size (px)
     GuiSetStyle(BUTTON, TEXT_SPACING, 1);                                     // letter spacing (px)
-    GuiSetStyle(BUTTON, TEXT_ALIGNMENT, 0);                                   // 0 = left-aligned text
+    GuiSetStyle(BUTTON, TEXT_ALIGNMENT, TEXT_ALIGN_CENTER);                   // Centre-aligned text
     GuiSetStyle(BUTTON, BORDER_WIDTH, 1);                                     // 1px border
 
     // ── Slider style ────────────────────────────────────────────
@@ -75,9 +74,6 @@ void ui_draw_sidebar(SimState* sim, UIState* ui, ObstacleList* obs) {
     GuiSetStyle(SLIDER, BORDER_COLOR_PRESSED,ColorToGui(t.accent));           // pressed border
     GuiSetStyle(SLIDER, SLIDER_WIDTH, 8);                                     // handle width (px)
     GuiSetStyle(SLIDER, BORDER_WIDTH, 1);                                     // 1px border
-
-    // ── Text alignment style ──────────────────────────────────────────
-    GuiSetStyle(BUTTON, TEXT_ALIGNMENT, TEXT_ALIGN_CENTER); 
 
     int y = 56;                                                               // first section starts below title + underline
 
@@ -166,7 +162,7 @@ void ui_draw_sidebar(SimState* sim, UIState* ui, ObstacleList* obs) {
     Rectangle dw = {(float)PAD, (float)y, INNER_W, ELEM_H};
     if (GuiButton(dw, "Draw Walls")) {
         ui->draw_mode = !ui->draw_mode;      // toggle draw mode on/off
-        obs->drop_shape = 0;                 // draw mode is 0
+        obs->drop_shape = DROP_NONE;         // draw mode is 0
     }
     if (ui->draw_mode)                       // on means accent ring overlay
         DrawRectangleLinesEx(dw, 2.0f, t.accent);
@@ -175,16 +171,16 @@ void ui_draw_sidebar(SimState* sim, UIState* ui, ObstacleList* obs) {
     Rectangle cir = {(float)PAD, (float)y, INNER_W/2 - 3, ELEM_H};           // circle-shape tool button rect
     Rectangle rec = {(float)(PAD + INNER_W/2 + 3), (float)y, INNER_W/2 - 3, ELEM_H}; // rect-shape tool button rect
     if (GuiButton(cir, "Circle")) {
-        obs->drop_shape = (obs->drop_shape == 1) ? 0 : 1;                      // click again to disarm back to spawning
+        obs->drop_shape = (obs->drop_shape == DROP_CIRCLE) ? DROP_NONE : DROP_CIRCLE;                      // click again to disarm back to spawning
         ui->draw_mode = false;                                                 // a shape tool on turns wall mode off
     }
-    if (obs->drop_shape == 1)                                                  // circle armed → accent ring overlay
+    if (obs->drop_shape == DROP_CIRCLE)                                                  // circle armed → accent ring overlay
         DrawRectangleLinesEx(cir, 2.0f, t.accent);
     if (GuiButton(rec, "Rect")) {
-        obs->drop_shape = (obs->drop_shape == 2) ? 0 : 2;                      // click again to disarm back to spawning
+        obs->drop_shape = (obs->drop_shape == DROP_RECT) ? DROP_NONE : DROP_RECT;                      // click again to disarm back to spawning
         ui->draw_mode = false;                                                 // a shape tool on turns wall mode off
     }
-    if (obs->drop_shape == 2)                                                  // rect armed → accent ring overlay
+    if (obs->drop_shape == DROP_RECT)                                                  // rect armed → accent ring overlay
         DrawRectangleLinesEx(rec, 2.0f, t.accent);
 
     // ── Interaction mode (pinned near particle counter) ──────────

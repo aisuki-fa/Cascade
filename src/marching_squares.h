@@ -10,7 +10,7 @@
 #define MS_H 100 // ceil 800/8
 
 
-// void ms_clear_field(float field[MS_H][MS_W]);
+void ms_clear_field(float field[MS_W][MS_H]);
 void ms_build_field(float field[MS_W][MS_H],SimState* sim);
 void ms_draw(float field[MS_W][MS_H],Color color);
 

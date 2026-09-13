@@ -3,7 +3,7 @@
 #include<math.h>
 
 
-// void ms_clear_field(float field[MS_H][MS_W]);
+void ms_clear_field(float field[MS_W][MS_H]);
 void ms_build_field(float field[MS_W][MS_H],SimState* sim);
 void ms_draw(float field[MS_W][MS_H],Color color);
 
@@ -66,7 +66,17 @@ void ms_draw(float field[MS_W][MS_H], Color color){
                 default: break;
             }        
 
+    void ms_clear_field(float field[MS_H][MS_W]){
+        for(int x=0;x<MS_W;x++){
+            for(int y=0;y<MS_H;y++){
+                field[x][y]=0.0f;
 
+            }
+        }
+
+
+
+    }
             
         
     }

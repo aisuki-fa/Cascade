@@ -64,8 +64,9 @@ int main(void) {
         input_update(&sim, &ui, &obs, mouse, dt);
 
         // Marching squares field (test)
-        // ms_clear_field(ms_field);
+        
         if (ui.show_ms) {
+            ms_clear_field(ms_field);
             ms_build_field(ms_field, &sim);
             ms_draw(ms_field, RED);
         }

@@ -1,15 +1,6 @@
 #include "cascade.h"
 #include "renderer.h"
-#include<math.h>
-void render_blended(SimState* sim,SpatialHash* sh );
-void render_solid(SimState* sim);
-void render_velocity(SimState* sim);
-void render_density(SimState* sim);
-void render_particles(SimState* sim, SpatialHash* sh, UIState* ui);
-void render_hud(int count, int fps, bool paused);
-
-
-
+#include <math.h>
 
 Color lerp_color(Color a,Color b ,float t){
 t=fminf(fmaxf(t,0),1); //clamp t to 0,1
@@ -19,7 +10,6 @@ return(Color){
     (int)(a.b +(b.b-a.b)*t),255
 
 };}
-
 
 void render_solid(SimState* sim){//renders particles into circles 
     for(int i=sim->count-1;i>=0;i--){//i for each particle 
@@ -44,6 +34,7 @@ void render_velocity(SimState* sim){
     DrawCircleV(sim->particles[i].pos,sim->particle_radius,c);
     }
 }
+
 void render_density(SimState* sim){
     Color c;
     for(int i=0;i<sim->count;i++){
@@ -62,10 +53,11 @@ void render_density(SimState* sim){
     }
 
 }
+
 void render_hud(int count, int fps, bool paused) {
     (void)count;
     Theme t = theme_get();
-    Color fc = fps > 50 ? GREEN : fps > 30 ? YELLOW : RED;
+    Color fc = fps > 50 ? t.ok : fps > 30 ? t.warn : t.danger;
     float w_fps = MeasureTextEx(font_ui, TextFormat("FPS: %d", fps), 30, 1).x;
     DrawTextEx(font_ui, TextFormat("FPS: %d", fps), (Vector2){ WINDOW_W - 16 - w_fps, 12 }, 30, 1, fc);
     if (paused) {
@@ -78,7 +70,7 @@ void render_hud(int count, int fps, bool paused) {
         float w_on = MeasureTextEx(font_ui, "Ongoing", 30, 1).x;
     DrawTextEx(font_ui, "Ongoing", (Vector2){ WINDOW_W - 16 - w_on, 45 }, 30, 1, fc);
     }
-    const char* hint = "Left: Spawn  |  Right: Attract(A) / Repel(R)  |  Space: Pause  |  D: Draw  |  T: Theme  |  X: Clear";
+    const char* hint = "Left: Spawn  |  Right: Attract(A) / Repel(R)  |  Space: Pause  |  D: Draw  |  T: Theme  |  F: Fluidity  |  X: Clear";
     DrawTextEx(font_ui_small, hint, (Vector2){ SIDEBAR_W + 10, WINDOW_H - 20 }, 14, 1, t.dim);
 }
 
@@ -109,14 +101,11 @@ void render_blended(SimState* sim,SpatialHash* sh){
 }
 
 
-
-
 void render_particles(SimState* sim, SpatialHash* sh, UIState* ui) {
-    (void)sh;
-    if(ui->render_mode==0)
-    render_blended(sim,sh);
-    else if (ui->render_mode==2)
-    render_density(sim);
-    else if (ui->render_mode==1)
-    render_velocity(sim);
+    if (ui->render_mode == RENDER_SOLID)
+        render_blended(sim, sh);
+    else if (ui->render_mode == RENDER_VELOCITY)
+        render_velocity(sim);
+    else if (ui->render_mode == RENDER_DENSITY)
+        render_density(sim);
 }

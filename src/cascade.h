@@ -27,7 +27,7 @@ typedef struct {
     float   density;                                   // SPH density at this position (computed each frame)
     float   pressure;                                  // derived from density: max(0, k * (density - target))
     Color   color;
-    int fluid_type ;                                   // user-chosen spawn color
+    int fluid_type ;                                   // unused
 } Particle;
 
 // ── Simulation state (Person A owns this, others read it) ─────────
@@ -59,6 +59,7 @@ typedef enum {
 typedef struct {
     Color       spawn_color;                           // color picker writes, input.c reads
     RenderMode  render_mode;                           // dropdown writes, renderer.c reads
+    bool        show_ms; 
     float       mouse_radius;                          // attraction/repulsion radius (later)
     bool        draw_mode;                             // true = left-click draws walls, not particles
     bool        mouse_attract;                         // right click held (later)
@@ -73,16 +74,17 @@ typedef struct {
     Vector2 p1;                                        // rect: top-left, circle: center, line: point A
     Vector2 p2;                                        // rect: width/height, circle: unused, line: point B
     float   radius;                                    // OBS_CIRCLE only
-    Color   color;                                     // display color
     bool    active;                                    // false = skip collision detection
 } Obstacle;
+
+typedef enum { DROP_NONE = 0, DROP_CIRCLE = 1, DROP_RECT = 2 } DropTool;
 
 typedef struct {
     Obstacle list[MAX_OBSTACLES];                      // fixed array of 64 obstacles
     int      count;                                    // how many obstacles are active
     bool     drawing;                                  // true = user is dragging to draw a new one
     Vector2  draw_start;                               // mouse press position (start of drag)
-    int      drop_shape;                               // 0 = none, 1 = circle, 2 = rect — armed shape-drop tool
+    DropTool  drop_shape;                              // enums for shape-drop tool
 } ObstacleList;
 
 #endif // CASCADE_H                                    // end of include guard

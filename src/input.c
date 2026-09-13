@@ -40,8 +40,9 @@ void input_update(SimState* sim, UIState* ui, ObstacleList* obs, Vector2 mouse, 
     if (ui) {                                                            // only check keys if ui exists (not NULL)
         if (IsKeyPressed(KEY_A)) ui->mouse_repel = false;                // Attract mod
         else if (IsKeyPressed(KEY_R)) ui->mouse_repel = true;            // Repulse mode
-        if (IsKeyPressed(KEY_D)) { ui->draw_mode = !ui->draw_mode; obs->drop_shape = 0; } // toggle wall-drawing mode (disarms any shape tool)
+        if (IsKeyPressed(KEY_D)) { ui->draw_mode = !ui->draw_mode; obs->drop_shape = DROP_NONE; } // toggle wall-drawing mode (disarms any shape tool)
         if (IsKeyPressed(KEY_T)) theme_dark = !theme_dark;               // toggle dark/light theme
+        if (IsKeyPressed(KEY_F)) ui->show_ms = !ui->show_ms;             // toggles fluidity overlay (marching squares) on/off
     }
 
     last_mouse = mouse;                                                  // update last mouse position for next frame
@@ -56,7 +57,7 @@ void input_add_particle(SimState* sim, Vector2 pos, Vector2 vel, Color color) {
     sim->particles[i].color = color;                   // set color
     sim->particles[i].density = 300.0f;                // same as default so that it starts as neutral state
     sim->particles[i].pressure = 0;                    // same as default so that it starts as neutral state
-    sim->particles[i].force = (Vector2){0, 0}; 
-    sim->particles[i].fluid_type = 0;                   // set force to zero
+    sim->particles[i].force = (Vector2){0, 0};         // set force to zero
+    sim->particles[i].fluid_type = 0;                  
     sim->count++;                                      // count this new particle
 }

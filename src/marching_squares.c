@@ -64,8 +64,9 @@ void ms_draw(float field[MS_W][MS_H], Color color){
                 case 13: DrawLineEx(bottom, right, 2.0f, color); break;
                 case 14: DrawLineEx(left, bottom, 2.0f, color); break;
                 default: break;
-            }        
-
+            }           
+    }
+    
     void ms_clear_field(float field[MS_W][MS_H]){
         for(int x=0;x<MS_W;x++){
             for(int y=0;y<MS_H;y++){
@@ -73,11 +74,5 @@ void ms_draw(float field[MS_W][MS_H], Color color){
 
             }
         }
-
-
-
-    }
-            
-        
     }
 }

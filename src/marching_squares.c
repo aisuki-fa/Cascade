@@ -1,20 +1,42 @@
 #include "cascade.h"
 #include "marching_squares.h"
-#include<math.h>
+#include <math.h>
 
 
 void ms_clear_field(float field[MS_W][MS_H]);
 void ms_build_field(float field[MS_W][MS_H],SimState* sim);
 void ms_draw(float field[MS_W][MS_H],Color color);
+void ms_fill_blob(float field[MS_W][MS_H],Color color, float th);
 
-    void ms_clear_field(float field[MS_W][MS_H]){
-        for(int x=0;x<MS_W;x++){
-            for(int y=0;y<MS_H;y++){
-                field[x][y]=0.0f;
 
+void ms_fill_blob(float field[MS_W][MS_H],Color color,float th) {
+    for(int x=0;x<MS_W-1;x++) {
+        for(int y=0;y<MS_H-1;y++){
+            float f0 = field[x][y],
+             f1 = field[x + 1][y],
+            f2 = field[x][y + 1],
+             f3 = field[x + 1][y + 1];
+            if(f0>th && f1> th && f2> th && f3> th) {
+                float wx = x * MS_CELL + SIDEBAR_W,
+                wy = y * MS_CELL;
+                DrawRectangle((int)wx, (int)wy, MS_CELL, MS_CELL, color);
             }
         }
     }
+}
+
+void ms_clear_field(float field[MS_W][MS_H]){
+
+        for(int x=0;x<MS_W;x++){
+
+            for(int y=0;y<MS_H;y++){
+                field[x][y]=0.0f;
+            }
+        }
+    }
+
+
+
 void ms_build_field(float field[MS_W][MS_H],SimState* sim){
 
     for(int i=0;i<sim->count;i++){
@@ -74,19 +96,9 @@ void ms_draw(float field[MS_W][MS_H], Color color){
                 default: break;
             }           
     }
-<<<<<<< HEAD
+
     
 }
-=======
      
-}
 
-void ms_clear_field(float field[MS_W][MS_H]){
-        for(int x=0;x<MS_W;x++){
-            for(int y=0;y<MS_H;y++){
-                field[x][y]=0.0f;
 
-            }
-        }
-    }
->>>>>>> 8380ba94bfd588d5d629428fc7f982a3e4fa1c4c

@@ -74,6 +74,8 @@ int main(void) {
             ms_clear_field(ms_field);
             ms_build_field(ms_field, &sim);
             ms_draw(ms_field,PINK);
+        }
+         if (ui.show_ms==2) {//MS
             ms_fill_blob(ms_field,ui.spawn_color,0.6);
         }
 

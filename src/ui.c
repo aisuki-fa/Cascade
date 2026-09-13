@@ -104,8 +104,9 @@ void ui_draw_sidebar(SimState* sim, UIState* ui, ObstacleList* obs) {
 
     // Fluidity toggle button (marching squares overlay)
     Rectangle grd = {(float)PAD, (float)y, INNER_W, ELEM_H};                   // start at (PAD,y) with size INNER_W * ELEM_H
-    if (GuiButton(grd, "Fluidity")) ui->show_ms = !ui->show_ms;                // toggle overlay
+    if (GuiButton(grd, "Fluidity")) ui->show_ms = (ui->show_ms + 1) % 3;                // toggle overlay//TT%3 to for converting 2 to 0 
     if (ui->show_ms) DrawRectangleLinesEx(grd, 2.0f, t.accent);                // accent ring when armed or active
+    if (ui->show_ms==2) DrawRectangleLinesEx(grd, 5.0f, t.accent);    //TT for 3 rd toggle
 
     // move down past the button + gap to the next section
     y += ELEM_H + SEC_GAP;

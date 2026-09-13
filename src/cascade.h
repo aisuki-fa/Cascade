@@ -59,7 +59,7 @@ typedef enum {
 typedef struct {
     Color       spawn_color;                           // color picker writes, input.c reads
     RenderMode  render_mode;                           // buttons write, renderer.c reads
-    bool        show_ms;                               // marching squares grid overlay toggle
+    int        show_ms;                               // marching squares grid overlay toggle//TTint to have multiple toggles
     bool        draw_mode;                             // true = left-click draws walls, not particles
     bool        mouse_repel;                           // middle click held (later)
 } UIState;

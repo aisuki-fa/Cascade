@@ -81,6 +81,10 @@ void render_hud(int count, int fps, bool paused) {
     const char* hint = "Left: Spawn  |  Right: Attract(A) / Repel(R)  |  Space: Pause  |  D: Draw  |  T: Theme  |  X: Clear";
     DrawTextEx(font_ui_small, hint, (Vector2){ SIDEBAR_W + 10, WINDOW_H - 20 }, 14, 1, t.dim);
 }
+
+
+
+
 void render_blended(SimState* sim,SpatialHash* sh){
     for(int i=0;i<sim->count;i++){
         int out_ids[100];
@@ -103,6 +107,10 @@ void render_blended(SimState* sim,SpatialHash* sh){
             DrawCircleV(sim->particles[i].pos,sim->particle_radius,c);
     }
 }
+
+
+
+
 void render_particles(SimState* sim, SpatialHash* sh, UIState* ui) {
     (void)sh;
     if(ui->render_mode==0)

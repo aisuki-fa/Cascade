@@ -23,23 +23,23 @@ static const Theme DARK = { // dark theme palette
 };
 
 static const Theme LIGHT = {// light theme palette
-    {245, 247, 251, 255 },  // background
-    {238, 241, 247, 255 },  // sidebar panel backdrop
-    {255, 255, 255, 255 },  // section; sim, fluid, spawn-col, visualize, obs backdrop
-    {249, 250, 252, 255 },  // card; sim 3s, obs ones and numbers
-    {210, 218, 230, 255 },  // border; border on sliders, cards and sidebar separation
-    {168, 180, 200, 255 },  // border_hi; border of sliders when mouse hovers
-    { 26,  36,  56, 255 },  // text
-    { 88, 102, 128, 255 },  // dim; helper text on the bottom
-    {150, 160, 180, 255 },  // faint
-    {  8, 100, 120, 255 },  // section header; sim, fluid, spawn-col, visualize, obs backdrop
-    {  8, 145, 178, 255 },  // accent color
-    {103, 193, 214, 255 },  // accent_dim
-    { 51,  65,  85, 255 },  // obstacle
-    {  5, 150, 105, 255 },  // ok
-    {180, 120,   0, 255 },  // warn
-    {220,  80,  80, 255 },  // danger
-    {220, 120,  30, 255 },  // repel
+    {246, 248, 255, 255 },  // background
+    {235, 239, 250, 255 },  // sidebar panel backdrop
+    {157, 204, 235, 255 },  // section; sim, fluid, spawn-col, visualize, obs backdrop
+    {255, 255, 255, 255 },  // card; sim 3s, obs ones and numbers
+    {120, 160, 220, 255 },  // border; border on sliders, cards and sidebar separation
+    {  0, 140, 255, 255 },  // border_hi; border of sliders when mouse hovers
+    {  0,  80, 255, 255 },  // text; 
+    { 40,  90, 200, 255 },  // dim; helper text on the bottom
+    { 90, 130, 210, 255 },  // faint
+    { 20,  50, 255, 255 },  // section header; sim, fluid, spawn-col, visualize, obs backdrop
+    {  0, 160, 240, 255 },  // accent color
+    { 80, 180, 250, 255 },  // accent_dim
+    {255, 140,   0, 255 },  // obstacle
+    {  0, 200, 120, 255 },  // ok
+    {255, 196,   0, 255 },  // warn
+    {255,  60,  60, 255 },  // danger
+    {255, 150,   0, 255 },  // repel
 };
 
 // Select active theme palette

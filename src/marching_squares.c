@@ -74,5 +74,19 @@ void ms_draw(float field[MS_W][MS_H], Color color){
                 default: break;
             }           
     }
+<<<<<<< HEAD
     
 }
+=======
+     
+}
+
+void ms_clear_field(float field[MS_W][MS_H]){
+        for(int x=0;x<MS_W;x++){
+            for(int y=0;y<MS_H;y++){
+                field[x][y]=0.0f;
+
+            }
+        }
+    }
+>>>>>>> 8380ba94bfd588d5d629428fc7f982a3e4fa1c4c

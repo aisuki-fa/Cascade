@@ -14,9 +14,5 @@ void ms_clear_field(float field[MS_W][MS_H]);
 void ms_build_field(float field[MS_W][MS_H],SimState* sim);
 void ms_draw(float field[MS_W][MS_H],Color color);
 void ms_fill_blob(float field[MS_W][MS_H],Color color, float th);
-// Rookie version: any grid cell whose field value falls between
-// th_low and th_high is "near" the fluid but not quite inside it,
-// so it gets flat-filled with a secondary color to fake a glow.
-void ms_fill_proximity(float field[MS_W][MS_H], Color color, float th_low, float th_high) ;
 
 #endif

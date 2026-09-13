@@ -63,18 +63,19 @@ int main(void) {
         Vector2 mouse = GetMousePosition();
         input_update(&sim, &ui, &obs, mouse, dt);
 
-        // Marching squares field (test)
         
-        if (ui.show_ms) {
-            ms_clear_field(ms_field);
-            ms_build_field(ms_field, &sim);
-            ms_draw(ms_field, RED);
-            ms_fill_proximity(ms_field, (Color){100, 50, 180, 50}, 0.2f, 0.6f);
-        }
+        
 
         // Draw
         BeginDrawing();
         ClearBackground(theme_get().bg);
+
+        if (ui.show_ms) {//MS
+            ms_clear_field(ms_field);
+            ms_build_field(ms_field, &sim);
+            ms_draw(ms_field,PINK);
+            ms_fill_blob(ms_field,ui.spawn_color,0.6);
+        }
 
         render_particles(&sim, &sh, &ui);
         obs_render(&obs);

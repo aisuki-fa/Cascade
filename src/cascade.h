@@ -27,7 +27,7 @@ typedef struct {
     float   density;                                   // SPH density at this position (computed each frame)
     float   pressure;                                  // derived from density: max(0, k * (density - target))
     Color   color;
-    int fluid_type ;                                   // user-chosen spawn color
+    int fluid_type ;                                   // unused
 } Particle;
 
 // ── Simulation state (Person A owns this, others read it) ─────────

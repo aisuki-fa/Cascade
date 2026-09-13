@@ -69,7 +69,7 @@ int main(void) {
             ms_clear_field(ms_field);
             ms_build_field(ms_field, &sim);
             ms_draw(ms_field, RED);
-            ms_fill_blob(ms_field,BLUE,0.6);
+            ms_fill_proximity(ms_field, (Color){100, 50, 180, 50}, 0.2f, 0.6f);
         }
 
         // Draw

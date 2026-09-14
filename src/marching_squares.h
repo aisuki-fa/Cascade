@@ -14,5 +14,6 @@ void ms_clear_field(float field[MS_W][MS_H]);
 void ms_build_field(float field[MS_W][MS_H],SimState* sim);
 void ms_draw(float field[MS_W][MS_H],Color color);
 void ms_fill_blob(float field[MS_W][MS_H],Color color, float th);
+void heatmap(float field[MS_W][MS_H]);
 
 #endif

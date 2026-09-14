@@ -7,6 +7,7 @@ void ms_clear_field(float field[MS_W][MS_H]);
 void ms_build_field(float field[MS_W][MS_H],SimState* sim);
 void ms_draw(float field[MS_W][MS_H],Color color);
 void ms_fill_blob(float field[MS_W][MS_H],Color color, float th);
+void heatmap(float field[MS_W][MS_H]);
 
 
 
@@ -56,6 +57,21 @@ void ms_build_field(float field[MS_W][MS_H],SimState* sim){
 
         }
     }
+   
+}
+
+void heatmap(float field[MS_W][MS_H]){
+     for(int i=0;i<MS_W;i++){
+        for(int j=0;j<MS_H;j++){
+            if (field[i][j] <= 0.01f) continue;
+            float alpha = 50.0f * field[i][j];
+            if (alpha < 0.0f)   alpha = 0.0f;
+            if (alpha > 255.0f) alpha = 255.0f;
+            float wx = i * MS_CELL + SIDEBAR_W;
+            float wy = j * MS_CELL;
+            DrawCircle((int)wx,(int)wy,4.0f,(Color) {255,0,0,(unsigned char)alpha});
+        }
+    }
 }
 
 void ms_draw(float field[MS_W][MS_H], Color color){
@@ -80,7 +96,8 @@ void ms_draw(float field[MS_W][MS_H], Color color){
              left={ix*MS_CELL + SIDEBAR_W,(iy+tLeft)*MS_CELL},
              right={(ix+1)*MS_CELL + SIDEBAR_W,(iy+tRight)*MS_CELL};
              switch(code){
-             case 1:  DrawLineEx(left, bottom, 2.0f, color); break;
+             case 1:  DrawLineEx(left, bottom, 2.0f, color);
+             break;
                 case 2:  DrawLineEx(bottom, right, 2.0f, color); break;
                 case 3:  DrawLineEx(left, right, 2.0f, color); break;
                 case 4:  DrawLineEx(top, left, 2.0f, color); break;

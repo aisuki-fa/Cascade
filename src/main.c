@@ -70,13 +70,23 @@ int main(void) {
         BeginDrawing();
         ClearBackground(theme_get().bg);
 
-        if (ui.show_ms) {//MS
+        if (ui.show_ms==1) {//MS
             ms_clear_field(ms_field);
             ms_build_field(ms_field, &sim);
+            
             ms_draw(ms_field,PINK);
         }
          if (ui.show_ms==2) {//MS
+            ms_clear_field(ms_field);
+            ms_build_field(ms_field, &sim);
             ms_fill_blob(ms_field,ui.spawn_color,0.6);
+            ms_draw(ms_field,PINK);
+        }
+        if(ui.show_ms==3){
+            ms_clear_field(ms_field);
+            ms_build_field(ms_field, &sim);
+            heatmap(ms_field);
+            
         }
 
         render_particles(&sim, &sh, &ui);
